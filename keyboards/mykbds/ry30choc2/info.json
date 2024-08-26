@@ -1,0 +1,32 @@
+{
+    "manufacturer": "Roger Young",
+    "keyboard_name": "My30pctChoc",
+    "maintainer": "Roger Young",
+    "bootloader": "custom",
+    "features": {
+        "bootmagic": false,
+        "command": false,
+        "console": true,
+        "extrakey": false,
+        "mousekey": false,
+        "nkro": true
+    },
+    "processor": "RP2040",
+    "url": "",
+    "usb": {
+        "device_version": "1.0.0",
+        "pid": "0x07F8",
+        "vid": "0x0050"
+    },
+    "layouts": {
+        "LAYOUT": {
+            "layout": [
+                { "matrix": [0, 0], "y": 0, "x": 0 },
+                { "matrix": [0, 1], "y": 0, "x": 1 },
+                { "matrix": [0, 2], "y": 0, "x": 2 },
+                { "matrix": [0, 3], "y": 0, "x": 3 },
+				{ "matrix": [0, 4], "y": 0, "x": 4 }
+            ]
+        }
+    }
+}

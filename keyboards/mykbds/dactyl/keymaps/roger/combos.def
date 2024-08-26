@@ -1,0 +1,13 @@
+COMB(dfBsp,                  KC_BSPC,   KC_D,   KC_F)
+COMB(jkSPC,                  KC_SPC,   KC_J,    KC_K)
+
+TOGG(sql,              3,    KC_M,    LT(0,KC_COMM))
+COMB(cvTab,                  KC_TAB,   LT(0,  KC_C),   LT(0,KC_V))
+
+COMB(vbGUI,                  KC_RGUI,   KC_B,   LT(0,KC_V))
+COMB(nmGUI,                  KC_RGUI,   KC_N,   KC_M)
+
+COMB(fgDel,                  KC_DEL,    KC_F,   KC_G)
+COMB(hjESC,                  KC_ESC,    KC_H,   KC_J)
+
+

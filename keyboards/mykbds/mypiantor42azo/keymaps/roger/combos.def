@@ -1,0 +1,6 @@
+COMB(dfBsp,                   KC_BSPC,  KC_D, KC_F)
+COMB(jkDel,                   KC_DEL,  KC_J, KC_K)
+TOGG(symbol1, 1 ,              LT(1,KC_G),    LT(1,KC_H))
+TOGG(symbol2, 1 ,              LT(0,KC_5),    LT(0,KC_6))
+TOGG(FUNC1, 2 ,              LT(2,KC_B),    LT(2,KC_N))
+TOGG(FUNC2, 2 ,              KC_VOLD,        KC_END)
