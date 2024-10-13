@@ -1,26 +1,52 @@
 #include QMK_KEYBOARD_H
-#include "g/keymap_combo.h"
-#include "features/achordion.h"
-#include "features/layer_lock.h"
+//#include "g/keymap_combo.h"
+//#include "features/achordion.h"
+//#include "features/layer_lock.h"
 
 // Defines names for use in layer keycodes and the keymap5
 enum layer_names {
     _QWERTY = 0,
 	_SYM,
     _FUNC,
-	_SQL,
 	_PSS
 };
 
+enum combos {
+  sdfSTab,
+  dfBsp,
+  fgDel,
+  jkEnt,
+  hjLead,
+  jklTab
+};
+
+const uint16_t PROGMEM sdf_combo[] = {KC_S, KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM df_combo[] = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM fg_combo[] = {KC_F, KC_G, COMBO_END};
+const uint16_t PROGMEM jk_combo[] = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM jkl_combo[] = {KC_J, KC_K, KC_L, COMBO_END};
+const uint16_t PROGMEM hj_combo[] = {KC_H, KC_J, COMBO_END};
+
+combo_t key_combos[] = {
+  [sdfSTab] = COMBO(sdf_combo, S(KC_TAB)),
+  [dfBsp] = COMBO(df_combo, KC_BSPC),
+  [fgDel] = COMBO(fg_combo, KC_DEL),
+  [jkEnt] = COMBO(jk_combo, KC_ENT),
+  [hjLead] = COMBO(hj_combo, QK_LEAD),
+  [jklTab] = COMBO(jkl_combo, KC_TAB)
+};
 
 #define ZCTRZ LT(0,KC_Z)
 #define XCTRX LT(0,KC_X)
 #define CCTRC LT(0,KC_C)
 #define VCTRV LT(0,KC_V)
-#define ACTRA LT(0,KC_A)
+#define BCTRA LT(0,KC_B)
+#define PAT LT(0,KC_P)
 #define CMALT LT(0,KC_COMM)
 #define DOTGT LT(0,KC_DOT)
 #define SCLCL LT(0,KC_SCLN)
+#define LBDLR LT(0,KC_E)
+#define CTAMP LT(0,KC_R)
 #define OCPAR LT(0,KC_9) //( and )
 #define OCBRK LT(0,KC_8) //[ and ]
 #define OCBRC LT(0,KC_0) //{ and }
@@ -32,6 +58,8 @@ enum layer_names {
 #define EXCPI LT(0,KC_2) //eclamation pipe
 #define GRVTI LT(0,KC_1) //grave tilda
 #define ASTPC LT(0,KC_W) //Asterisk percent
+#define QESC LT(0,KC_Q) //Q ESC
+#define ZDOT LT(0,KC_T) //0 .-+.&&^
 
 #define MY_1 KC_SECRET_1
 #define MY_2 KC_SECRET_2
@@ -63,53 +91,165 @@ enum layer_names {
 #define MY_28 KC_SECRET_28
 #define MY_29 KC_SECRET_29
 #define MY_30 KC_SECRET_30
+#define MY_31 KC_SECRET_31
+#define MY_32 KC_SECRET_32
+#define MY_33 KC_SECRET_33
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_QWERTY] = LAYOUT_split_3x6_3(
-ASTPC,  KC_Q, LALT_T(KC_W), LCTL_T(KC_E), LSFT_T(KC_R),        KC_T,              KC_Y, SFT_T(KC_U), RCTL_T(KC_I), RALT_T(KC_O),  KC_P, QTDQT, //MY_QTMCR,LT(0,KC_ESC)
-SLBSL, ACTRA,         KC_S,         KC_D,         KC_F,        KC_G,              KC_H,        KC_J,         KC_K,         KC_L, SCLCL, PLSMN, //MY_OPMCR, //LT(0,KC_QUOT),LT(0,KC_Q)
-EXCPI, ZCTRZ,        XCTRX,        CCTRC,        VCTRV,        KC_B,              KC_N,        KC_M,        CMALT,        DOTGT, QSUDR, EQNEQ,// MY_EQMCR, //LT(0,KC_BSLS),S(KC_SLSH),LT(0,KC_W),MY_EXMCR
-                               MO(_FUNC),       KC_SPC,    MO(_SYM),          MO(_SYM),      KC_ENT,     MO(_FUNC)
+        GRVTI,  QESC,         KC_W,         KC_E,         KC_R,        KC_T,              KC_Y,        KC_U,         KC_I,         KC_O,   PAT,        QTDQT, //MY_QTMCR,LT(0,KC_ESC)
+        ASTPC,  KC_A,         KC_S,         KC_D,         KC_F,        KC_G,              KC_H,        KC_J,         KC_K,         KC_L, SCLCL,        SLBSL, //MY_OPMCR, //LT(0,KC_QUOT),LT(0,KC_Q)
+        EXCPI,  KC_Z,         KC_X,         KC_C,         KC_V,        KC_B,              KC_N,        KC_M,        CMALT,        DOTGT, QSUDR,OSM(MOD_RCTL), //MY_EQMCR, //LT(0,KC_BSLS),S(KC_SLSH),LT(0,KC_W),MY_EXMCR
+                               MO(_FUNC),       KC_SPC,   MO(_FUNC),          MO(_SYM),   KC_ENT,      OSM(MOD_RSFT)
 ),
+//[_SYM] = LAYOUT_split_3x6_3(
+//_______,     KC_F1,     KC_F2,     KC_F3,    KC_F4,     KC_F5,        KC_F6,         KC_F7,       KC_F8,       KC_F9,       KC_F10,      _______, //LT(0,KC_PPLS),
+//_______,      KC_1,      KC_2,      KC_3,     KC_4,      KC_5,         KC_6,          KC_7,        KC_8,        KC_9,         KC_0,      _______,
+//_______,     GRVTI,   S(KC_2),   S(KC_3),   S(KC_4),  _______,      S(KC_6),       S(KC_7),  LT(0,KC_9),  LT(0,KC_0),   LT(0,KC_8),      _______,
+//                               _______,  _______,    _______,                      _______,     _______,   _______
+//),
 [_SYM] = LAYOUT_split_3x6_3(
-QK_UNDERGLOW_TOGGLE,     KC_F1,     KC_F2,     KC_F3,    KC_F4,     KC_F5,        KC_F6,         KC_F7,       KC_F8,       KC_F9,       KC_F10,      _______, //LT(0,KC_PPLS),
-QK_UNDERGLOW_HUE_UP,      KC_1,      KC_2,      KC_3,     KC_4,      KC_5,         KC_6,          KC_7,        KC_8,        KC_9,         KC_0,      _______,
-QK_UNDERGLOW_MODE_NEXT,     GRVTI,   S(KC_2),   S(KC_3),   S(KC_4),  _______,      S(KC_6),       S(KC_7),  LT(0,KC_9),  LT(0,KC_0),   LT(0,KC_8),      _______,
-                               _______,  LLOCK,    _______,                      _______,     LLOCK,   _______
+LT(0,KC_9),    LBDLR,      KC_KP_7,      KC_KP_8,      KC_KP_9,    PLSMN,      _______,       _______,      _______,      _______,      _______,      _______, //LT(0,KC_PPLS),
+LT(0,KC_0),    CTAMP,      KC_KP_4,      KC_KP_5,      KC_KP_6,    EQNEQ,      _______,       _______,      _______,      _______,      _______,      _______,
+LT(0,KC_8),     ZDOT,      KC_KP_1,      KC_KP_2,      KC_KP_3,   KC_ENT,      _______,       KC_RSFT,OSM(MOD_RCTL),OSM(MOD_RALT),OSM(MOD_RGUI),      _______,
+                               _______,    _______,    _______,                      _______,     _______,   _______
 ),
+//[_FUNC] = LAYOUT_split_3x6_3(
+// _______,   KC_BTN1,     MS_SFTLC,      _______,      _______,          KC_MUTE,        KC_INS,       _______,     _______,  _______,    XXXXXXX,     XXXXXXX,
+// _______,  MS_CTLLC,LT(0,KC_BTN1),      KC_MS_U,      KC_BTN2,          KC_VOLU,       KC_HOME,       XXXXXXX,       KC_UP,  XXXXXXX,    KC_PGUP,     XXXXXXX,
+// _______,   _______,      KC_MS_L,      KC_MS_D,      KC_MS_R,          KC_VOLD,        KC_END,       KC_LEFT,     KC_DOWN, KC_RIGHT,    KC_PGDN,     XXXXXXX,
+//                                _______,      _______ ,    _______ ,          _______ ,  _______ ,  _______
+//),
 [_FUNC] = LAYOUT_split_3x6_3(
- _______,   KC_BTN1,     MS_SFTLC,      _______,      _______,          KC_MUTE,        KC_INS,       _______,     _______,  _______,    XXXXXXX,     XXXXXXX,
- _______,  MS_CTLLC,LT(0,KC_BTN1),      KC_MS_U,      KC_BTN2,          KC_VOLU,       KC_HOME,       XXXXXXX,       KC_UP,  XXXXXXX,    KC_PGUP,     XXXXXXX,
- _______,   _______,      KC_MS_L,      KC_MS_D,      KC_MS_R,          KC_VOLD,        KC_END,       KC_LEFT,     KC_DOWN, KC_RIGHT,    KC_PGDN,     XXXXXXX,
-                                _______,      LLOCK ,    _______ ,          _______ ,  LLOCK ,  _______
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_MUTE,       XXXXXXX,     XXXXXXX,  XXXXXXX,    XXXXXXX,     XXXXXXX,
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_VOLU, LT(0,KC_BTN1),     KC_MS_U,  KC_BTN2,    XXXXXXX,     XXXXXXX,
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      KC_RCTL,      KC_LSFT,          XXXXXXX,       KC_VOLD,       KC_MS_L,     KC_MS_D,  KC_MS_R,    XXXXXXX,     XXXXXXX,
+                                _______,      _______ ,    _______ ,          _______ ,  _______ ,  _______
 ),
+/*
 [_SQL] = LAYOUT_split_3x6_3(
      MY_SLMC1,          MY_SCHMC1,    MY_SCHMC4,        MY_WHMCR,     MY_JNMCR,            _______,     MY_GBMCR,    MY_AGMCR,  MY_SYSMCR,   MY_DCMCR,    _______,   _______,
      MY_SLMC2,			MY_SCHMC2,      _______,         _______,      _______,            _______,      _______,     _______,    _______,   _______,     _______,   _______,
   LT(0,MY_WQ),          MY_SCHMC3,      _______,         _______,      _______,            _______,      _______,     _______,    _______,   _______,     _______,   _______,
-                                       _______, QK_REP, _______,                                _______,  QK_REP,  _______
-    ),
+                                       _______, _______, _______,                                _______,  _______,  _______
+    ),*/
 [_PSS] = LAYOUT_split_3x6_3(
-XXXXXXX,                   MY_17,    MY_23,     MY_5,        MY_18,              MY_20,            MY_25,         MY_21,       MY_9,    MY_15,       MY_16,  XXXXXXX,
-XXXXXXX,				    MY_1,    MY_19,     MY_4,         MY_6,               MY_7,             MY_8,         MY_10,      MY_11,    MY_12,       MY_29,  XXXXXXX,
-XXXXXXX,                   MY_26,    MY_24,     MY_3,        MY_22,               MY_2,            MY_14,         MY_13,      MY_27,    MY_28,       MY_30,  XXXXXXX,
+MY_29,                 MY_17,    MY_23,     MY_5,        MY_18,              MY_20,            MY_25,         MY_21,       MY_9,    MY_15,       MY_16,    MY_32,
+MY_30,				    MY_1,    MY_19,     MY_4,         MY_6,               MY_7,             MY_8,         MY_10,      MY_11,    MY_12,     XXXXXXX,    MY_33,
+MY_31,                 MY_26,    MY_24,     MY_3,        MY_22,               MY_2,            MY_14,         MY_13,      MY_27,    MY_28,     XXXXXXX,  XXXXXXX,
                                _______, XXXXXXX, XXXXXXX,           XXXXXXX,  XXXXXXX,  _______
 )
 };
+
+void leader_start_user(void) {
+    // Do something when the leader key is pressed
+}
+
+void leader_end_user(void) {
+    if (leader_sequence_one_key(KC_A)) {
+        // Leader, a => Types the below string
+		send_string_with_delay_P(PSTR("SELECT \n*\nFROM\n\nWHERE\n\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
+    } else if (leader_sequence_two_keys(KC_A,KC_A)) {
+        // Leader, a,a => Types the below string
+		send_string_with_delay_P(PSTR("SELECT\nCOUNT(*) as CntOf\nFROM\n\nWHERE\nGROUP BY\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
+    } else if (leader_sequence_one_key(KC_S)) {
+        // Leader, s => Types the below string
+        send_string_with_delay_P(PSTR("\nINNER JOIN  AS B ON"), 10);
+    } else if (leader_sequence_two_keys(KC_S, KC_S)) {
+        // Leader, s => Types the below string
+        send_string_with_delay_P(PSTR("\nLEFT OUTER JOIN  AS B ON"), 10);
+    } else if (leader_sequence_one_key(KC_D)) {
+        // Leader, s => Types the below string
+        send_string_with_delay_P(PSTR("\nWHERE  = "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+    } else if (leader_sequence_two_keys(KC_D, KC_D)) {
+        // Leader, d, d => Ctrl+A, Ctrl+C
+        send_string_with_delay_P(PSTR("\nWHERE  LIKE '%'"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+    } else if (leader_sequence_three_keys(KC_D, KC_D, KC_D)) {
+        // Leader, d, d, s => Types the below string
+        send_string_with_delay_P(PSTR("\nWHERE  IS NULL"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+    } else if (leader_sequence_four_keys(KC_D, KC_D, KC_D,KC_D)) {
+        // Leader, d, d, s => Types the below string
+        send_string_with_delay_P(PSTR("\nWHERE  IS BETWEEN  AND"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+    } else if (leader_sequence_one_key(KC_F)) {
+        send_string_with_delay_P(PSTR("COUNT(*) as CntOf,\n"), 10);
+    } else if (leader_sequence_two_keys(KC_F,KC_F)) {
+        send_string_with_delay_P(PSTR("MAX(*) as MaxOf,\n"), 10);
+    } else if (leader_sequence_three_keys(KC_F,KC_F,KC_F)) {
+        send_string_with_delay_P(PSTR("MIN(*) as MinOf,\n"), 10);
+    } else if (leader_sequence_one_key(KC_G)) {
+        send_string_with_delay_P(PSTR("SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION, \n"), 10);
+        send_string_with_delay_P(PSTR("DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE \n"), 10);
+        send_string_with_delay_P(PSTR("FROM [INFORMATION_SCHEMA].[COLUMNS] \n"), 10);
+        send_string_with_delay_P(PSTR("WHERE COLUMN_NAME like '%%' \n"), 10);
+        send_string_with_delay_P(PSTR("AND TABLE_NAME like '%%' \n"), 10);
+        send_string_with_delay_P(PSTR("AND TABLE_SCHEMA like '%%' \n"), 10);
+        send_string_with_delay_P(PSTR("ORDER BY ORDINAL_POSITION"), 10);
+    } else if (leader_sequence_two_keys(KC_G,KC_G)) {
+        send_string_with_delay_P(PSTR("SELECT tab.TABLE_SCHEMA, tab.TABLE_NAME, col.COLUMN_NAME, col.ORDINAL_POSITION, \n"), 10);
+        send_string_with_delay_P(PSTR("col.DATA_TYPE, col.LENGTH, col.NUMERIC_SCALE \n"), 10);
+        send_string_with_delay_P(PSTR("FROM QSYS2.SYSTABLES tab \n"), 10);
+        send_string_with_delay_P(PSTR("INNER JOIN QSYS2.SYSCOLUMNS col \n"), 10);
+        send_string_with_delay_P(PSTR("ON tab.TABLE_NAME = col.TABLE_NAME and tab.SCHEMA_NAME = col.SCHEMA_NAME \n"), 10);
+        send_string_with_delay_P(PSTR("WHERE col.COLUMN_NAME like '%%' \n"), 10);
+        send_string_with_delay_P(PSTR("AND tab.TABLE_NAME like '%%' \n"), 10);
+        send_string_with_delay_P(PSTR("AND tab.TABLE_SCHEMA like '%%' \n"), 10);
+        send_string_with_delay_P(PSTR("ORDER BY col.ORDINAL_POSITION"), 10);
+    } else if (leader_sequence_one_key(KC_T)) {
+		send_string_with_delay_P(PSTR("DECLARE @int INT = "), 10);
+    } else if (leader_sequence_two_keys(KC_T,KC_T)) {
+		send_string_with_delay_P(PSTR("DECLARE @str VARCHAR(50) = ''"SS_TAP(X_LEFT)), 10);
+    } else if (leader_sequence_one_key(KC_Y)) {
+		send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"'"SS_TAP(X_END)"',"SS_TAP(X_DOWN)), 10); //wrap a line in single quotes
+    } else if (leader_sequence_two_keys(KC_Y,KC_Y)) {
+		send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"\""SS_TAP(X_END)"\","SS_TAP(X_DOWN)), 10); //wrap a line in double quotes
+    } else if (leader_sequence_one_key(KC_H)) {
+		send_string_with_delay_P(PSTR("DBO."), 10);
+    } else if (leader_sequence_two_keys(KC_H,KC_H)) {
+		send_string_with_delay_P(PSTR("QSYS2."), 10);
+    } else if (leader_sequence_three_keys(KC_H,KC_H,KC_H)) {
+		send_string_with_delay_P(PSTR("SYSIBM."), 10);
+    } else if (leader_sequence_one_key(KC_J)) {
+		send_string_with_delay_P(PSTR("PRODTAPD."), 10);
+    } else if (leader_sequence_two_keys(KC_J,KC_J)) {
+		send_string_with_delay_P(PSTR("PROTBLPD."), 10);
+    } else if (leader_sequence_three_keys(KC_J,KC_J,KC_J)) {
+		send_string_with_delay_P(PSTR("PROQUERY."), 10);
+    }else if (leader_sequence_one_key(KC_L)) {
+		send_string_with_delay_P(PSTR("QS36F."), 10);
+    } else if (leader_sequence_one_key(KC_K)) {
+		send_string_with_delay_P(PSTR("VTSINT."), 10);
+    } else if (leader_sequence_two_keys(KC_K,KC_K)) {
+		send_string_with_delay_P(PSTR("ICORPD."), 10);
+    } else if (leader_sequence_three_keys(KC_K,KC_K,KC_K)) {
+		send_string_with_delay_P(PSTR("ICORPDCD."), 10);
+    } else if (leader_sequence_one_key(KC_N)) {
+        send_string_with_delay_P(PSTR(SS_LGUI("r")), 10); //run
+    }
+ else if (leader_sequence_two_keys(KC_N, KC_N)) {
+        send_string_with_delay_P(PSTR(SS_LGUI("l")), 10); //log out
+    }
+}
+
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LALT_T(KC_W):
-            return TAPPING_TERM + 70;
-        case RALT_T(KC_O):
-            return TAPPING_TERM + 70;
         case LT(0,KC_A):
-            return TAPPING_TERM + 170;
+            return TAPPING_TERM + 150;
         case LT(0,KC_Z):
-            return TAPPING_TERM + 170;
-        case LT(0,KC_X):
-            return TAPPING_TERM + 170;
-        case LT(0,KC_C):
-            return TAPPING_TERM + 170;
+            return TAPPING_TERM + 150;
+        case ZDOT:
+            return TAPPING_TERM + 150;
+        case PAT:
+            return TAPPING_TERM + 150;
+        case OSM(MOD_LSFT):
+            return TAPPING_TERM + 320;
+        case OSM(MOD_RSFT):
+            return TAPPING_TERM + 320;
+        case OSM(MOD_RALT):
+            return TAPPING_TERM + 320;
+        case OSM(MOD_RCTL):
+            return TAPPING_TERM + 320;
+        case OSM(MOD_RGUI):
+            return TAPPING_TERM + 320;
         default:
             return TAPPING_TERM;
     }
@@ -125,9 +265,9 @@ const rgblight_segment_t PROGMEM my_sym_layer[] = RGBLIGHT_LAYER_SEGMENTS(
 const rgblight_segment_t PROGMEM my_func_layer[] = RGBLIGHT_LAYER_SEGMENTS(
     {0, 1, HSV_PURPLE}
 );
-const rgblight_segment_t PROGMEM my_sql_layer[] = RGBLIGHT_LAYER_SEGMENTS(
-    {0, 1, HSV_GREEN}
-);
+//const rgblight_segment_t PROGMEM my_sql_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+//    {0, 1, HSV_GREEN}
+//);
 const rgblight_segment_t PROGMEM my_pss_layer[] = RGBLIGHT_LAYER_SEGMENTS(
     { 0, 1, HSV_RED}
 );
@@ -145,7 +285,7 @@ const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
     my_qwerty_layer,//
     my_sym_layer,    // Overrides caps lock layer
     my_func_layer,    // Overrides other layers
-    my_sql_layer,     // Overrides other layers
+   // my_sql_layer,     // Overrides other layers
     my_pss_layer,     // Overrides other layers
     _yes_layer,
     _no_layer
@@ -169,14 +309,14 @@ layer_state_t default_layer_state_set_user(layer_state_t state) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     rgblight_set_layer_state(1, layer_state_cmp(state, _SYM));
     rgblight_set_layer_state(2, layer_state_cmp(state, _FUNC));
-    rgblight_set_layer_state(3, layer_state_cmp(state, _SQL));
+//    rgblight_set_layer_state(3, layer_state_cmp(state, _SQL));
     rgblight_set_layer_state(4, layer_state_cmp(state, _PSS));
     return state;
 }
 
-void matrix_scan_user(void) {
-  achordion_task();
-}
+//void matrix_scan_user(void) {
+//  achordion_task();
+//}
 
 void housekeeping_task_user(void) {
   #ifdef RGBLIGHT_TIMEOUT
@@ -194,9 +334,12 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
   /* rest of the function code here */
 }
 
+uint8_t mod_state;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-        if (!process_achordion(keycode, record)) { return false; }
-        if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
+//        if (!process_achordion(keycode, record)) { return false; }
+//        if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
+        mod_state = get_mods();
         switch (keycode) {
               case MO(_SYM):
                     if (record->event.pressed) {
@@ -234,84 +377,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     unregister_code16(LCTL(KC_BTN1));
                 }
             break;
-            /*
-          case MY_OPMCR:
-                // MY_MACRO is being used normally.
+            case KC_BSPC:
+                {
+                // Initialize a boolean variable that keeps track
+                // of the delete key status: registered or not?
+                static bool delkey_registered;
                 if (record->event.pressed) {
-                    if(!(mod_state & MOD_MASK_SHIFT) && !(mod_state & MOD_MASK_CTRL)){
-		            send_string_with_delay_P(PSTR("+"), 10);
+                    // Detect the activation of either shift keys
+                    if (mod_state & MOD_MASK_SHIFT) {
+                        // First temporarily canceling both shifts so that
+                        // shift isn't applied to the KC_DEL keycode
+                        del_mods(MOD_MASK_SHIFT);
+                        register_code(KC_DEL);
+                        // Update the boolean variable to reflect the status of KC_DEL
+                        delkey_registered = true;
+                        // Reapplying modifier state so that the held shift key(s)
+                        // still work even after having tapped the Backspace/Delete key.
+                        set_mods(mod_state);
+                        return false;
                     }
-                    if((mod_state & MOD_MASK_SHIFT) && !(mod_state & MOD_MASK_CTRL)){
-                      del_mods(MOD_MASK_SHIFT);
-                      send_string_with_delay_P(PSTR("-"), 10);
-                    }
-                    if((mod_state & MOD_MASK_CTRL) && !(mod_state & MOD_MASK_SHIFT)){
-                      del_mods(MOD_MASK_CTRL);
-                      send_string_with_delay_P(PSTR("*"), 10);
-                     // add_mods(MOD_MASK_CTRL);
-                    }
-                    if((mod_state & MOD_MASK_CTRL) && (mod_state & MOD_MASK_SHIFT)){
-                      del_mods(MOD_MASK_CTRL);
-                      del_mods(MOD_MASK_SHIFT);
-                      send_string_with_delay_P(PSTR("\\"), 10);
-                      add_mods(MOD_MASK_CTRL);
-                      add_mods(MOD_MASK_SHIFT);
-                    }
-                    }
-                    else {
-                    clear_mods();
-                    }
-                   break;
-          case MY_EQMCR:
-                if (record->event.pressed) {
-                    if(!(mod_state & MOD_MASK_SHIFT) && !(mod_state & MOD_MASK_CTRL)){
-		            send_string_with_delay_P(PSTR("="), 10);
-                    }
-                    if((mod_state & MOD_MASK_SHIFT) && !(mod_state & MOD_MASK_CTRL)){
-                      del_mods(MOD_MASK_SHIFT);
-                      send_string_with_delay_P(PSTR("!="), 10);
-                    }
-                    if((mod_state & MOD_MASK_CTRL) && !(mod_state & MOD_MASK_SHIFT)){
-                      del_mods(MOD_MASK_CTRL);
-                      send_string_with_delay_P(PSTR("<="), 10);
-                    }
-                    if((mod_state & MOD_MASK_CTRL) && (mod_state & MOD_MASK_SHIFT)){
-                      del_mods(MOD_MASK_CTRL);
-                      del_mods(MOD_MASK_SHIFT);
-                      send_string_with_delay_P(PSTR(">="), 10);
+                } else { // on release of KC_BSPC
+                    // In case KC_DEL is still being sent even after the release of KC_BSPC
+                    if (delkey_registered) {
+                        unregister_code(KC_DEL);
+                        delkey_registered = false;
+                        return false;
                     }
                 }
-                else {
-                    clear_mods();
-                    }
-                   break;
-         case MY_EXMCR:
-                // MY_MACRO is being used normally.?_
-                if (record->event.pressed) {
-                 if(!(mod_state & MOD_MASK_SHIFT) && !(mod_state & MOD_MASK_CTRL)){
-		            send_string_with_delay_P(PSTR("?"), 10);
-                    }
-                    if((mod_state & MOD_MASK_SHIFT) && !(mod_state & MOD_MASK_CTRL)){
-                      del_mods(MOD_MASK_SHIFT);
-                      send_string_with_delay_P(PSTR("_"), 10);
-                    }
-                    if((mod_state & MOD_MASK_CTRL) && !(mod_state & MOD_MASK_SHIFT)){
-                      del_mods(MOD_MASK_CTRL);
-                      send_string_with_delay_P(PSTR("|"), 10);
-                      add_mods(MOD_MASK_CTRL);
-                    }
-                    if((mod_state & MOD_MASK_CTRL) && (mod_state & MOD_MASK_SHIFT)){
-                      del_mods(MOD_MASK_CTRL);
-                      del_mods(MOD_MASK_SHIFT);
-                      send_string_with_delay_P(PSTR("/"), 10);
-                      add_mods(MOD_MASK_CTRL);
-                      add_mods(MOD_MASK_SHIFT);
-                    }
+                // Let QMK process the KC_BSPC keycode as usual outside of shift
+                return true;
             }
-                else {
-                    clear_mods();
-                    }
-                   break;*/
           case MY_DCMCR:
             if (get_repeat_key_count() > 0) {
                 // MY_MACRO is being repeated!
@@ -499,7 +594,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             return false;
 */
-
           case MY_SLMC1:
             if (get_repeat_key_count() > 0) {
                 // MY_MACRO is being repeated!
@@ -668,6 +762,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_string_with_delay_P(PSTR("|"), 10);
             }
 			return false;
+         case LBDLR:
+            if (record->tap.count && record->event.pressed) {
+                send_string_with_delay_P(PSTR("#"), 10);
+            } else if (record->event.pressed) {
+                send_string_with_delay_P(PSTR("$"), 10);
+            }
+			return false;
+         case CTAMP:
+            if (record->tap.count && record->event.pressed) {
+                send_string_with_delay_P(PSTR("^"), 10);
+            } else if (record->event.pressed) {
+                send_string_with_delay_P(PSTR("&"), 10);
+            }
+			return false;
+         case ZDOT:
+            if (record->tap.count && record->event.pressed) {
+                send_string_with_delay_P(PSTR("0"), 10);
+            } else if (record->event.pressed) {
+                send_string_with_delay_P(PSTR("."), 10);
+            }
+			return false;
         case QSUDR:
            if (record->tap.count && record->event.pressed) {
                 send_string_with_delay_P(PSTR("?"), 10);
@@ -689,6 +804,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                   send_string_with_delay_P(PSTR("!="), 10);
             }
 			return false;
+         case QESC:
+            if (record->tap.count && record->event.pressed) {
+                send_string_with_delay_P(PSTR("q"), 10);
+            } else if (record->event.pressed) {
+                tap_code16(KC_ESC);
+            }
+			return false;
         case PLSMN:
             if (record->tap.count && record->event.pressed) {
                 send_string_with_delay_P(PSTR("+"), 10);
@@ -707,15 +829,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_Z); // Intercept tap function to send z
             } else if (record->event.pressed) {
-                rgblight_blink_layer(6, 500);
+                rgblight_blink_layer(5, 500);
                 tap_code16(C(KC_Z)); // Intercept hold function to undo
             }
 			return false;
-         case ACTRA:
+         case BCTRA:
             if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_A); // Intercept tap function to send a
+                tap_code16(KC_B); // Intercept tap function to send a
             } else if (record->event.pressed) {
-                rgblight_blink_layer(6, 500);
+                rgblight_blink_layer(5, 500);
                 tap_code16(C(KC_A)); // Intercept hold to select all
             }
 			return false;
@@ -723,15 +845,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_X); // Intercept tap function to send x
             } else if (record->event.pressed) {
-                rgblight_blink_layer(6, 500);
+                rgblight_blink_layer(5, 500);
                 tap_code16(C(KC_X)); // Intercept hold top cut
+            }
+			return false;
+         case PAT:
+            if (record->tap.count && record->event.pressed) {
+                tap_code16(KC_P); // Intercept tap function to send x p
+            } else if (record->event.pressed) {
+                tap_code16(S(KC_2)); // Intercept hold @
             }
 			return false;
          case CCTRC:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_C); // Intercept tap function to send c
             } else if (record->event.pressed) {
-                rgblight_blink_layer(6, 500);
+                rgblight_blink_layer(5, 500);
                 tap_code16(C(KC_C)); // Intercept hold to copy
             }
 			return false;
@@ -739,7 +868,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_V); // Intercept tap function to send v
             } else if (record->event.pressed) {
-                rgblight_blink_layer(6, 500);
+                rgblight_blink_layer(5, 500);
                 tap_code16(C(KC_V)); // Intercept hold function to paste
             }
 			return false;
@@ -791,14 +920,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else if (record->event.pressed) {
                 tap_code16(C(KC_X)); // Intercept hold function to send Cut
             }
-			return false;
+			return false;*/
          case CMALT:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_COMM); // Intercept tap function to send ,
             } else if (record->event.pressed) {
                 tap_code16(S(KC_COMM)); // Intercept hold function to send <
             }
-			return false;*/
+			return false;
          case DOTGT:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_DOT); // Intercept tap function to send .
