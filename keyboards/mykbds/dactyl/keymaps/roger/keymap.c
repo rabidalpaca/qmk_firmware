@@ -1,12 +1,10 @@
 #include QMK_KEYBOARD_H
-//#include "g/keymap_combo.h"
-//#include "features/achordion.h"
-//#include "features/layer_lock.h"
 
 // Defines names for use in layer keycodes and the keymap5
 enum layer_names {
     _QWERTY = 0,
 	_SYM,
+    _MOUS,
     _FUNC,
 	_PSS
 };
@@ -59,8 +57,7 @@ combo_t key_combos[] = {
 #define GRVTI LT(0,KC_1) //grave tilda
 #define ASTPC LT(0,KC_W) //Asterisk percent
 #define QESC LT(0,KC_Q) //Q ESC
-#define ZDOT LT(0,KC_T) //0 .-+.&&^
-
+#define ZDOT LT(0,KC_T) //0 .
 #define MY_1 KC_SECRET_1
 #define MY_2 KC_SECRET_2
 #define MY_3 KC_SECRET_3
@@ -94,50 +91,41 @@ combo_t key_combos[] = {
 #define MY_31 KC_SECRET_31
 #define MY_32 KC_SECRET_32
 #define MY_33 KC_SECRET_33
+#define MY_34 KC_SECRET_34
+#define MY_35 KC_SECRET_35
+#define MY_36 KC_SECRET_36
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_QWERTY] = LAYOUT_split_3x6_3(
         GRVTI,  QESC,         KC_W,         KC_E,         KC_R,        KC_T,              KC_Y,        KC_U,         KC_I,         KC_O,   PAT,        QTDQT, //MY_QTMCR,LT(0,KC_ESC)
         ASTPC,  KC_A,         KC_S,         KC_D,         KC_F,        KC_G,              KC_H,        KC_J,         KC_K,         KC_L, SCLCL,        SLBSL, //MY_OPMCR, //LT(0,KC_QUOT),LT(0,KC_Q)
         EXCPI,  KC_Z,         KC_X,         KC_C,         KC_V,        KC_B,              KC_N,        KC_M,        CMALT,        DOTGT, QSUDR,OSM(MOD_RCTL), //MY_EQMCR, //LT(0,KC_BSLS),S(KC_SLSH),LT(0,KC_W),MY_EXMCR
-                               MO(_FUNC),       KC_SPC,   MO(_FUNC),          MO(_SYM),   KC_ENT,      OSM(MOD_RSFT)
+                               MO(_FUNC),       KC_SPC,   MO(_MOUS),          MO(_SYM),   KC_ENT,      OSM(MOD_RSFT)
 ),
-//[_SYM] = LAYOUT_split_3x6_3(
-//_______,     KC_F1,     KC_F2,     KC_F3,    KC_F4,     KC_F5,        KC_F6,         KC_F7,       KC_F8,       KC_F9,       KC_F10,      _______, //LT(0,KC_PPLS),
-//_______,      KC_1,      KC_2,      KC_3,     KC_4,      KC_5,         KC_6,          KC_7,        KC_8,        KC_9,         KC_0,      _______,
-//_______,     GRVTI,   S(KC_2),   S(KC_3),   S(KC_4),  _______,      S(KC_6),       S(KC_7),  LT(0,KC_9),  LT(0,KC_0),   LT(0,KC_8),      _______,
-//                               _______,  _______,    _______,                      _______,     _______,   _______
-//),
 [_SYM] = LAYOUT_split_3x6_3(
 LT(0,KC_9),    LBDLR,      KC_KP_7,      KC_KP_8,      KC_KP_9,    PLSMN,      _______,       _______,      _______,      _______,      _______,      _______, //LT(0,KC_PPLS),
 LT(0,KC_0),    CTAMP,      KC_KP_4,      KC_KP_5,      KC_KP_6,    EQNEQ,      _______,       _______,      _______,      _______,      _______,      _______,
 LT(0,KC_8),     ZDOT,      KC_KP_1,      KC_KP_2,      KC_KP_3,   KC_ENT,      _______,       KC_RSFT,OSM(MOD_RCTL),OSM(MOD_RALT),OSM(MOD_RGUI),      _______,
                                _______,    _______,    _______,                      _______,     _______,   _______
 ),
-//[_FUNC] = LAYOUT_split_3x6_3(
-// _______,   KC_BTN1,     MS_SFTLC,      _______,      _______,          KC_MUTE,        KC_INS,       _______,     _______,  _______,    XXXXXXX,     XXXXXXX,
-// _______,  MS_CTLLC,LT(0,KC_BTN1),      KC_MS_U,      KC_BTN2,          KC_VOLU,       KC_HOME,       XXXXXXX,       KC_UP,  XXXXXXX,    KC_PGUP,     XXXXXXX,
-// _______,   _______,      KC_MS_L,      KC_MS_D,      KC_MS_R,          KC_VOLD,        KC_END,       KC_LEFT,     KC_DOWN, KC_RIGHT,    KC_PGDN,     XXXXXXX,
-//                                _______,      _______ ,    _______ ,          _______ ,  _______ ,  _______
-//),
-[_FUNC] = LAYOUT_split_3x6_3(
+[_MOUS] = LAYOUT_split_3x6_3(
  XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_MUTE,       XXXXXXX,     XXXXXXX,  XXXXXXX,    XXXXXXX,     XXXXXXX,
- XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_VOLU, LT(0,KC_BTN1),     KC_MS_U,  KC_BTN2,    XXXXXXX,     XXXXXXX,
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_VOLU,       KC_BTN1,     KC_MS_U,  KC_BTN2,    XXXXXXX,     XXXXXXX,
  XXXXXXX,   XXXXXXX,      XXXXXXX,      KC_RCTL,      KC_LSFT,          XXXXXXX,       KC_VOLD,       KC_MS_L,     KC_MS_D,  KC_MS_R,    XXXXXXX,     XXXXXXX,
                                 _______,      _______ ,    _______ ,          _______ ,  _______ ,  _______
+)
+,
+[_FUNC] = LAYOUT_split_3x6_3(
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       XXXXXXX,       XXXXXXX,     XXXXXXX,  XXXXXXX,    XXXXXXX,      KC_F24,
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,         KC_F7,         KC_F8,       KC_F9,   KC_F10,     KC_F11,      KC_F12,
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      KC_RCTL,      KC_LSFT,          XXXXXXX,         KC_F1,         KC_F2,       KC_F3,    KC_F4,      KC_F5,       KC_F6,
+                                _______,      _______ ,    _______ ,          _______ ,  _______ ,  _______
 ),
-/*
-[_SQL] = LAYOUT_split_3x6_3(
-     MY_SLMC1,          MY_SCHMC1,    MY_SCHMC4,        MY_WHMCR,     MY_JNMCR,            _______,     MY_GBMCR,    MY_AGMCR,  MY_SYSMCR,   MY_DCMCR,    _______,   _______,
-     MY_SLMC2,			MY_SCHMC2,      _______,         _______,      _______,            _______,      _______,     _______,    _______,   _______,     _______,   _______,
-  LT(0,MY_WQ),          MY_SCHMC3,      _______,         _______,      _______,            _______,      _______,     _______,    _______,   _______,     _______,   _______,
-                                       _______, _______, _______,                                _______,  _______,  _______
-    ),*/
 [_PSS] = LAYOUT_split_3x6_3(
 MY_29,                 MY_17,    MY_23,     MY_5,        MY_18,              MY_20,            MY_25,         MY_21,       MY_9,    MY_15,       MY_16,    MY_32,
-MY_30,				    MY_1,    MY_19,     MY_4,         MY_6,               MY_7,             MY_8,         MY_10,      MY_11,    MY_12,     XXXXXXX,    MY_33,
-MY_31,                 MY_26,    MY_24,     MY_3,        MY_22,               MY_2,            MY_14,         MY_13,      MY_27,    MY_28,     XXXXXXX,  XXXXXXX,
-                               _______, XXXXXXX, XXXXXXX,           XXXXXXX,  XXXXXXX,  _______
+MY_30,				    MY_1,    MY_19,     MY_4,         MY_6,               MY_7,             MY_8,         MY_10,      MY_11,    MY_12,       MY_35,    MY_33,
+MY_31,                 MY_26,    MY_24,     MY_3,        MY_22,               MY_2,            MY_14,         MY_13,      MY_27,    MY_28,       MY_36,    MY_34,
+                               XXXXXXX, XXXXXXX, XXXXXXX,           XXXXXXX,  XXXXXXX,  XXXXXXX
 )
 };
 
@@ -241,20 +229,19 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case PAT:
             return TAPPING_TERM + 150;
         case OSM(MOD_LSFT):
-            return TAPPING_TERM + 320;
+            return TAPPING_TERM + 220;
         case OSM(MOD_RSFT):
-            return TAPPING_TERM + 320;
+            return TAPPING_TERM + 220;
         case OSM(MOD_RALT):
-            return TAPPING_TERM + 320;
+            return TAPPING_TERM + 220;
         case OSM(MOD_RCTL):
-            return TAPPING_TERM + 320;
+            return TAPPING_TERM + 220;
         case OSM(MOD_RGUI):
-            return TAPPING_TERM + 320;
+            return TAPPING_TERM + 220;
         default:
             return TAPPING_TERM;
     }
 }
-
 
 const rgblight_segment_t PROGMEM my_qwerty_layer[] = RGBLIGHT_LAYER_SEGMENTS(
     {0, 1, HSV_BLUE}
@@ -265,9 +252,9 @@ const rgblight_segment_t PROGMEM my_sym_layer[] = RGBLIGHT_LAYER_SEGMENTS(
 const rgblight_segment_t PROGMEM my_func_layer[] = RGBLIGHT_LAYER_SEGMENTS(
     {0, 1, HSV_PURPLE}
 );
-//const rgblight_segment_t PROGMEM my_sql_layer[] = RGBLIGHT_LAYER_SEGMENTS(
-//    {0, 1, HSV_GREEN}
-//);
+const rgblight_segment_t PROGMEM my_mous_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 1, HSV_YELLOW}
+);
 const rgblight_segment_t PROGMEM my_pss_layer[] = RGBLIGHT_LAYER_SEGMENTS(
     { 0, 1, HSV_RED}
 );
@@ -284,8 +271,8 @@ bool process_record_secrets(uint16_t keycode, keyrecord_t *record) {
 const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
     my_qwerty_layer,//
     my_sym_layer,    // Overrides caps lock layer
+    my_mous_layer,    // Overrides caps lock layer
     my_func_layer,    // Overrides other layers
-   // my_sql_layer,     // Overrides other layers
     my_pss_layer,     // Overrides other layers
     _yes_layer,
     _no_layer
@@ -296,11 +283,6 @@ void keyboard_post_init_user(void) {
     rgblight_layers = my_rgb_layers;
 }
 
-//bool led_update_user(led_t led_state) {
-//    rgblight_set_layer_state(0, led_state.caps_lock);
-//    return true;
-//}
-
 layer_state_t default_layer_state_set_user(layer_state_t state) {
     rgblight_set_layer_state(0, layer_state_cmp(state, _QWERTY));
     return state;
@@ -308,15 +290,11 @@ layer_state_t default_layer_state_set_user(layer_state_t state) {
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     rgblight_set_layer_state(1, layer_state_cmp(state, _SYM));
-    rgblight_set_layer_state(2, layer_state_cmp(state, _FUNC));
-//    rgblight_set_layer_state(3, layer_state_cmp(state, _SQL));
+    rgblight_set_layer_state(2, layer_state_cmp(state, _MOUS));
+    rgblight_set_layer_state(3, layer_state_cmp(state, _FUNC));
     rgblight_set_layer_state(4, layer_state_cmp(state, _PSS));
     return state;
 }
-
-//void matrix_scan_user(void) {
-//  achordion_task();
-//}
 
 void housekeeping_task_user(void) {
   #ifdef RGBLIGHT_TIMEOUT
@@ -337,26 +315,24 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 uint8_t mod_state;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//        if (!process_achordion(keycode, record)) { return false; }
-//        if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
         mod_state = get_mods();
         switch (keycode) {
               case MO(_SYM):
                     if (record->event.pressed) {
                         layer_on(_SYM);
-                        update_tri_layer(_SYM, _FUNC, _PSS);
+                        update_tri_layer(_SYM, _MOUS, _PSS);
                     } else {
                         layer_off(_SYM);
-                        update_tri_layer(_SYM, _FUNC, _PSS);
+                        update_tri_layer(_SYM, _MOUS, _PSS);
                     }
                     return false;
-                case MO(_FUNC):
+                case MO(_MOUS):
                     if (record->event.pressed) {
-                        layer_on(_FUNC);
-                        update_tri_layer(_SYM, _FUNC, _PSS);
+                        layer_on(_MOUS);
+                        update_tri_layer(_SYM, _MOUS, _PSS);
                     } else {
-                        layer_off(_FUNC);
-                        update_tri_layer(_SYM, _FUNC, _PSS);
+                        layer_off(_MOUS);
+                        update_tri_layer(_SYM, _MOUS, _PSS);
                     }
                     return false;
           case MS_SFTLC:
@@ -573,27 +549,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-         /* case MY_QTMCR:
-                if (record->event.pressed) {
-                  if(!(mod_state & MOD_MASK_SHIFT) && !(mod_state & MOD_MASK_CTRL)){
-		            send_string_with_delay_P(PSTR("'"), 10);
-                    }
-                    if((mod_state & MOD_MASK_SHIFT) && !(mod_state & MOD_MASK_CTRL)){
-                      del_mods(MOD_MASK_SHIFT);
-                      send_string_with_delay_P(PSTR("\""), 10);
-                    }
-                    if((mod_state & MOD_MASK_CTRL) && !(mod_state & MOD_MASK_SHIFT)){
-                      del_mods(MOD_MASK_CTRL);
-                      send_string_with_delay_P(PSTR("%"), 10);
-                    }
-                    if((mod_state & MOD_MASK_CTRL) && (mod_state & MOD_MASK_SHIFT)){
-                      del_mods(MOD_MASK_CTRL);
-                      del_mods(MOD_MASK_SHIFT);
-                      send_string_with_delay_P(PSTR("%%"), 10);
-                    }
-                }
-            return false;
-*/
           case MY_SLMC1:
             if (get_repeat_key_count() > 0) {
                 // MY_MACRO is being repeated!
@@ -688,66 +643,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-        //case MY_SQ:
-		//	if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" '' "SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);git fetch upstream
-         //   }
-		//	return false;
-        //case MY_DQ:
-		//	if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" \"\" "SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
-         //   }
-		//	return false;
-        //case MY_UP:
-		//	if (record->event.pressed) {
-         //   send_string_with_delay_P(PSTR("UPDATE A SET  =  FROM  as A WHERE A.  ="SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //   }
-		//	return false;
-        //case MY_IN:
-		//	if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" IN (,) "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   }
-		//	return false;
-        //case MY_ISN:
-		//	if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" IS NULL "), 12);
-         //   }
-		//	return false;
-        //case MY_OB:
-		//	if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" ORDER BY "), 12);
-         //   }
-         		//	return false;
-      //case MY_WQ:
-		//	if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"'"SS_TAP(X_END)"',"SS_TAP(X_DOWN)), 12);
-        //    }
-		//	return false;
-      //case MY_SYS:
-		//	if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR("Declare @tablename varchar(100) = ''\n"), 12);
-        //    send_string_with_delay_P(PSTR("Declare @columnname varchar(100) = ''\n"), 12);
-       //     send_string_with_delay_P(PSTR("SELECT\n"), 12);
-       //     send_string_with_delay_P(PSTR("TABLE_SCHEMA\n"), 12);
-         //   send_string_with_delay_P(PSTR(", TABLE_NAME\n"), 12);
-         //   send_string_with_delay_P(PSTR(", COLUMN_NAME\n"), 12);
-        //    send_string_with_delay_P(PSTR(", ORDINAL_POSITION\n"), 12);
-        //    send_string_with_delay_P(PSTR(", column_Default\n"), 12);
-        //    send_string_with_delay_P(PSTR(", IS_NULLABLE\n"), 12);
-         //   send_string_with_delay_P(PSTR(", DATA_TYPE\n"), 12);
-        //    send_string_with_delay_P(PSTR(", CHARACTER_MAXIMUM_LENGTH\n"), 12);
-        //    send_string_with_delay_P(PSTR(", numeric_Scale\n"), 12);
-         //   send_string_with_delay_P(PSTR(", NUMERIC_PRECISION\n"), 12);
-         //   send_string_with_delay_P(PSTR(", DATETIME_PRECISION\n"), 12);
-       //     send_string_with_delay_P(PSTR("FROM\n"), 12);
-        //    send_string_with_delay_P(PSTR("INFORMATION_SCHEMA.COLUMNS\n"), 12);
-         //   send_string_with_delay_P(PSTR("WHERE\n"), 12);
-         //   send_string_with_delay_P(PSTR("TABLE_NAME LIKE '%' + @tablename + '%'\n"), 12);
-          //  send_string_with_delay_P(PSTR("AND\n"), 12);
-          //  send_string_with_delay_P(PSTR("COLUMN_NAME LIKE '%' + @columnname + '%'\n"), 12);
-         //  send_string_with_delay_P(PSTR(""), 12);
-         //   }
-		//	return false;
         case GRVTI:
             if (record->tap.count && record->event.pressed) {
                 send_string_with_delay_P(PSTR("`"), 10);
@@ -904,23 +799,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                  send_string_with_delay_P(PSTR("%"), 10);
             }
 			return false;
-            /*
-         case LT(0,KC_W):
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(C(KC_V)); // Intercept hold function to send Paste
-            } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR(""SS_TAP(X_END)SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)), 12);
-                tap_code16(C(KC_C)); // Intercept tap function to send Copy
-            }
-			return false;*/
-            /*
-         case LT(0,KC_Q):
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(C(KC_C)); // Intercept tap function to send Copy
-            } else if (record->event.pressed) {
-                tap_code16(C(KC_X)); // Intercept hold function to send Cut
-            }
-			return false;*/
          case CMALT:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_COMM); // Intercept tap function to send ,
@@ -935,14 +813,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_DOT)); // Intercept hold function to send >
             }
 			return false;
-            /*
-         case LT(0,KC_BSLS):
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_BSLS); // Intercept tap function to send
-            } else if (record->event.pressed) {
-                tap_code16(KC_SLSH); // Intercept hold function to send /
-            }
-			return false;*/
          case SCLCL:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_SCLN); // Intercept tap function to send;
@@ -950,156 +820,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_SCLN)); // Intercept hold function to send :
             }
 			return false;
-                        /*
-         case LT(0,KC_QUOT):
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_QUOT); // Intercept tap function to send '
-                tap_code16(KC_QUOT); // Intercept tap function to send '
-                tap_code(KC_LEFT); //to move inside
-            } else if (record->event.pressed) {
-                tap_code16(S(KC_QUOT)); // Intercept hold function to send "
-                tap_code16(S(KC_QUOT)); // Intercept hold function to send "
-                tap_code(KC_LEFT); //to move inside
-            }
-			return false;
-
-         case LT(0,KC_GRAVE):
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_GRAVE); // Intercept tap function to send `
-            } else if (record->event.pressed) {
-                tap_code16(S(KC_GRAVE)); // Intercept hold function to send ~
-            }
-			return false;
-         case LT(0,KC_P):
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_BSLS); // Intercept tap function to send 0 KC_BSLS
-            } else if (record->event.pressed) {
-                tap_code16(KC_PIPE);
-            }
-			return false;*/
-       //case BSP_DEL:
-       //     if (record->event.pressed) {
-        //        saved_mods = get_mods() & MOD_MASK_SHIFT;
-////
-         //       if (saved_mods == MOD_MASK_SHIFT) {  // Both shifts pressed
-        //            register_code(KC_DEL);
-          //      } else if (saved_mods) {   // One shift pressed
-          //          del_mods(saved_mods);  // Remove any Shifts present
-           //         register_code(KC_DEL);
-         //           add_mods(saved_mods);  // Add shifts again
-          //      } else {
-          //          register_code(KC_BSPC);
-           //     }
-         //   } else {
-          //      unregister_code(KC_DEL);
-         //       unregister_code(KC_BSPC);
-          //  }
-          //  return false;
-        // case LT(0,KC_PPLS):
-        //    if (record->tap.count && record->event.pressed) {
-        //        tap_code16(KC_PPLS); // Intercept tap function to send +
-        //    } else if (record->event.pressed) {
-        //        tap_code16(KC_PMNS); // Intercept hold function to send -
-        //    }
-		//	return false;
-         // case LT(0,KC_PAST):
-         //   if (record->tap.count && record->event.pressed) {
-        //        tap_code16(KC_PAST); // Intercept tap function to send *
-         //   } else if (record->event.pressed) {
-        //        tap_code16(KC_PSLS); // Intercept hold function to send /
-        //    }
-		//	return false;
-        // case LT(0,KC_EQL):
-         //   if (record->tap.count && record->event.pressed) {
-        //        tap_code16(KC_EQL); // Intercept tap function to send =
-        //    } else if (record->event.pressed) {
-         //       tap_code16(S(KC_MINUS)); // Intercept hold function to send _
-        //    }
-		//	return false;
-        // case LT(0,MY_SEL):
-        //    if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR("SELECT\n"SS_TAP(X_TAB)"*\n"SS_TAP(X_TAB)"FROM\n"SS_TAP(X_TAB)), 12);
-         //   } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR("SELECT\n"SS_TAP(X_TAB)"*\n"SS_TAP(X_TAB)"FROM  \n"SS_TAP(X_TAB)"WHERE  ="SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   }
-		//	return false;
-        // case LT(0,MY_DECL):
-         //   if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR("DECLARE @int INT = "), 12);
-        //   } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR("DECLARE @str VARCHAR(50) = ''"SS_TAP(X_LEFT)), 12);
-         //   }
-		//	return false;
-        //case LT(0,MY_WHR):
-         //   if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" WHERE  = "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   } else if (record->event.pressed) {
-        //    send_string_with_delay_P(PSTR(" WHERE  BETWEEN  AND "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   }
-		//	return false;
-        // case LT(0,MY_WHRC):
-         //   if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" WHERE  = '' "SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" WHERE  = \"\" "SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   }
-		//	return false;
-        //case LT(0,MY_INC):
-         //   if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" IN ('','') "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //    } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" IN (\"\",\"\") " SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //    }
-		//	return false;
-        // case LT(0,MY_LK):
-        //    if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" LIKE '%%' "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //    } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" LIKE \"%%\" "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   }
-		//	return false;
-        // case LT(0,MY_JN1):
-        //    if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" INNER JOIN  ON  = "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //    } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" LEFT OUTER JOIN  ON  = "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   }
-		//	return false;
-         //case LT(0,MY_JN2):
-         //   if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" FULL OUTER JOIN  ON  = "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-         //   } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" CROSS JOIN "), 12);
-        //    }
-		//	return false;
-        // case LT(0,MY_GB):
-         //   if (record->tap.count && record->event.pressed) {
-         //   send_string_with_delay_P(PSTR(" GROUP BY "), 12);
-         //   } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" HAVING "), 12);
-         //   }
-		//	return false;
-        // case LT(0,MY_AG1):
-        //    if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" COUNT(*) as CntOf "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //    } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" AVG() as AvgOf "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //   }
-		//	return false;
-        // case LT(0,MY_AG2):
-        //    if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" MAX() as MaxOf "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //    } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" MIN() as MinOf "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 12);
-        //    }
-		//	return false;
-         //case LT(0,MY_ISN):
-         //   if (record->tap.count && record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" IS NULL "), 12);
-         //   } else if (record->event.pressed) {
-		//	send_string_with_delay_P(PSTR(" IS NOT NULL "), 12);
-        //    }
-		//	return false;
          case LT(0,MY_WQ):
             if (record->tap.count && record->event.pressed) {
 			send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"'"SS_TAP(X_END)"',"SS_TAP(X_DOWN)), 10); //wrap a line in single quotes
