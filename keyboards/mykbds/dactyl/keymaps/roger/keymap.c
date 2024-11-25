@@ -10,35 +10,37 @@ enum layer_names {
 };
 
 enum combos {
-  sdfSTab,
+  //sdfSTab,//replace
+  odfDel,
   dfBsp,
-  fgDel,
+  //fgDel,//replace
+  fgLead,
   jkEnt,
   hjLead,
   jklTab
 };
 
-const uint16_t PROGMEM sdf_combo[] = {KC_S, KC_D, KC_F, COMBO_END};
+//const uint16_t PROGMEM sdf_combo[] = {KC_S, KC_D, KC_F, COMBO_END};//replace
+const uint16_t PROGMEM odf_combo[] = {OSM(MOD_RSFT), KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM df_combo[] = {KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM fg_combo[] = {KC_F, KC_G, COMBO_END};
 const uint16_t PROGMEM jk_combo[] = {KC_J, KC_K, COMBO_END};
 const uint16_t PROGMEM jkl_combo[] = {KC_J, KC_K, KC_L, COMBO_END};
 const uint16_t PROGMEM hj_combo[] = {KC_H, KC_J, COMBO_END};
-
 combo_t key_combos[] = {
-  [sdfSTab] = COMBO(sdf_combo, S(KC_TAB)),
+  //[sdfSTab] = COMBO(sdf_combo, S(KC_TAB)), //replace
+  [odfDel] = COMBO(odf_combo, KC_DEL),
   [dfBsp] = COMBO(df_combo, KC_BSPC),
-  [fgDel] = COMBO(fg_combo, KC_DEL),
+  [fgLead] = COMBO(fg_combo, QK_LEAD),
   [jkEnt] = COMBO(jk_combo, KC_ENT),
   [hjLead] = COMBO(hj_combo, QK_LEAD),
   [jklTab] = COMBO(jkl_combo, KC_TAB)
 };
 
-#define ZCTRZ LT(0,KC_Z)
-#define XCTRX LT(0,KC_X)
-#define CCTRC LT(0,KC_C)
-#define VCTRV LT(0,KC_V)
-#define BCTRA LT(0,KC_B)
+//#define XCTRX LT(0,KC_X)
+//#define CCTRC LT(0,KC_C)
+//#define VCTRV LT(0,KC_V)
+//#define BCTRA LT(0,KC_B)
 #define PAT LT(0,KC_P)
 #define CMALT LT(0,KC_COMM)
 #define DOTGT LT(0,KC_DOT)
@@ -105,13 +107,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_SYM] = LAYOUT_split_3x6_3(
 LT(0,KC_9),    LBDLR,      KC_KP_7,      KC_KP_8,      KC_KP_9,    PLSMN,      _______,       _______,      _______,      _______,      _______,      _______, //LT(0,KC_PPLS),
 LT(0,KC_0),    CTAMP,      KC_KP_4,      KC_KP_5,      KC_KP_6,    EQNEQ,      _______,       _______,      _______,      _______,      _______,      _______,
-LT(0,KC_8),     ZDOT,      KC_KP_1,      KC_KP_2,      KC_KP_3,   KC_ENT,      _______,       KC_RSFT,OSM(MOD_RCTL),OSM(MOD_RALT),OSM(MOD_RGUI),      _______,
+LT(0,KC_8),     ZDOT,      KC_KP_1,      KC_KP_2,      KC_KP_3,   KC_ENT,      _______, OSM(MOD_RSFT),OSM(MOD_RCTL),OSM(MOD_RALT),OSM(MOD_RGUI),      _______,
                                _______,    _______,    _______,                      _______,     _______,   _______
 ),
 [_MOUS] = LAYOUT_split_3x6_3(
  XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_MUTE,       XXXXXXX,     XXXXXXX,  XXXXXXX,    XXXXXXX,     XXXXXXX,
  XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_VOLU,       KC_BTN1,     KC_MS_U,  KC_BTN2,    XXXXXXX,     XXXXXXX,
- XXXXXXX,   XXXXXXX,      XXXXXXX,      KC_RCTL,      KC_LSFT,          XXXXXXX,       KC_VOLD,       KC_MS_L,     KC_MS_D,  KC_MS_R,    XXXXXXX,     XXXXXXX,
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      KC_LCTL,      KC_LSFT,          XXXXXXX,       KC_VOLD,       KC_MS_L,     KC_MS_D,  KC_MS_R,    XXXXXXX,     XXXXXXX,
                                 _______,      _______ ,    _______ ,          _______ ,  _______ ,  _______
 )
 ,
@@ -217,16 +219,13 @@ void leader_end_user(void) {
         send_string_with_delay_P(PSTR(SS_LGUI("l")), 10); //log out
     }
 }
-
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(0,KC_A):
-            return TAPPING_TERM + 150;
-        case LT(0,KC_Z):
-            return TAPPING_TERM + 150;
         case ZDOT:
             return TAPPING_TERM + 150;
         case PAT:
+            return TAPPING_TERM + 150;
+        case QESC:
             return TAPPING_TERM + 150;
         case OSM(MOD_LSFT):
             return TAPPING_TERM + 220;
@@ -240,6 +239,20 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return TAPPING_TERM + 220;
         default:
             return TAPPING_TERM;
+    }
+}
+
+bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case PAT:
+            // Do not select the hold action when another key is tapped.
+            return false;
+        case QESC:
+            // Do not select the hold action when another key is tapped.
+            return false;
+        default:
+            // Immediately select the hold action when another key is tapped.
+            return true;
     }
 }
 
@@ -339,10 +352,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                     // when keycode  is pressed
                     register_code16(LSFT(KC_BTN1));
-                } else {
+                } else
                     // when keycode is released
                     unregister_code16(LSFT(KC_BTN1));
-                }
+
             break;
           case MS_CTLLC:
             if (record->event.pressed) {
@@ -383,6 +396,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 // Let QMK process the KC_BSPC keycode as usual outside of shift
                 return true;
             }
+                    /*
           case MY_DCMCR:
             if (get_repeat_key_count() > 0) {
                 // MY_MACRO is being repeated!
@@ -398,7 +412,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-        case MY_SYSMCR:
+            case MY_SYSMCR:
             if (get_repeat_key_count() > 0) {
                 // MY_MACRO is being repeated!
                 if (record->event.pressed) {
@@ -426,6 +440,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
+
           case MY_GBMCR:
             if (get_repeat_key_count() > 0) {
                 // MY_MACRO is being repeated!
@@ -643,91 +658,106 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
+                        */
         case GRVTI:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("`"), 10);
+                //send_string_with_delay_P(PSTR("`"), 10);
+                tap_code(KC_GRV);
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("~"), 10);
+                set_oneshot_mods(MOD_BIT(KC_LALT));
             }
 		return false;
          case EXCPI:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("!"), 10);
+                //send_string_with_delay_P(PSTR("!"), 10);
+                tap_code16(KC_EXLM);
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("|"), 10);
+                //send_string_with_delay_P(PSTR("|"), 10);
+                tap_code16(KC_PIPE);
             }
 			return false;
          case LBDLR:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("#"), 10);
+                //send_string_with_delay_P(PSTR("#"), 10);
+                tap_code16(S(KC_3));  //#
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("$"), 10);
+                //send_string_with_delay_P(PSTR("$"), 10);
+                tap_code16(S(KC_4));  //$
             }
 			return false;
          case CTAMP:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("^"), 10);
+                //send_string_with_delay_P(PSTR("^"), 10);
+                tap_code16(S(KC_6));  //^
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("&"), 10);
+                //send_string_with_delay_P(PSTR("&"), 10);
+                tap_code16(S(KC_7));  //&
             }
 			return false;
          case ZDOT:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("0"), 10);
+                //send_string_with_delay_P(PSTR("0"), 10);
+                tap_code16(KC_0);  //0
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("."), 10);
+                //send_string_with_delay_P(PSTR("."), 10);
+                tap_code16(KC_DOT);  //.
             }
 			return false;
         case QSUDR:
            if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("?"), 10);
+                //send_string_with_delay_P(PSTR("?"), 10);
+                tap_code16(KC_QUES);  //?
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("_"), 10);
+                //send_string_with_delay_P(PSTR("_"), 10);
+                tap_code16(KC_UNDS);  //_
             }
 			return false;
          case SLBSL:
            if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("/"), 10);
+                //send_string_with_delay_P(PSTR("/"), 10);
+                tap_code16(KC_SLASH);  //?
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("\\"), 10);
+                //send_string_with_delay_P(PSTR("\\"), 10);
+                 tap_code16(KC_BSLS);  //
             }
 			return false;
          case EQNEQ:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("="), 10);
+                //send_string_with_delay_P(PSTR("="), 10);
+                tap_code16(KC_EQL);  //=
             } else if (record->event.pressed) {
-                  send_string_with_delay_P(PSTR("!="), 10);
+                //send_string_with_delay_P(PSTR("!="), 10);
+                tap_code16(KC_EXLM);  //!
+                tap_code16(KC_EQL);  //=
             }
 			return false;
          case QESC:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("q"), 10);
+                //send_string_with_delay_P(PSTR("q"), 10);
+                tap_code(KC_Q);
             } else if (record->event.pressed) {
-                tap_code16(KC_ESC);
+                tap_code(KC_ESC);
             }
 			return false;
         case PLSMN:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("+"), 10);
+                //send_string_with_delay_P(PSTR("+"), 10);
+                tap_code16(S(KC_EQL));  //+
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("-"), 10);
+                //send_string_with_delay_P(PSTR("-"), 10);
+                tap_code16(KC_MINS);  //-
             }
 			return false;
          case QTDQT:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("'"), 10);
+                //send_string_with_delay_P(PSTR("'"), 10);
+                tap_code(KC_QUOT);  //'
             } else if (record->event.pressed) {
-                send_string_with_delay_P(PSTR("\""), 10);
+                //send_string_with_delay_P(PSTR("\""), 10);
+                tap_code16(S(KC_QUOT));  //"
             }
 			return false;
-         case ZCTRZ:
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_Z); // Intercept tap function to send z
-            } else if (record->event.pressed) {
-                rgblight_blink_layer(5, 500);
-                tap_code16(C(KC_Z)); // Intercept hold function to undo
-            }
-			return false;
+            /*
          case BCTRA:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_B); // Intercept tap function to send a
@@ -736,6 +766,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(C(KC_A)); // Intercept hold to select all
             }
 			return false;
+
          case XCTRX:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_X); // Intercept tap function to send x
@@ -744,13 +775,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(C(KC_X)); // Intercept hold top cut
             }
 			return false;
+            */
          case PAT:
             if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_P); // Intercept tap function to send x p
+                tap_code(KC_P); // Intercept tap function to send x p
             } else if (record->event.pressed) {
                 tap_code16(S(KC_2)); // Intercept hold @
             }
 			return false;
+            /*
          case CCTRC:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_C); // Intercept tap function to send c
@@ -759,6 +792,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(C(KC_C)); // Intercept hold to copy
             }
 			return false;
+
          case VCTRV:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_V); // Intercept tap function to send v
@@ -766,13 +800,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 rgblight_blink_layer(5, 500);
                 tap_code16(C(KC_V)); // Intercept hold function to paste
             }
-			return false;
+			return false;            */
          case OCBRK:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(S(KC_LBRC)); // Intercept tap function to send 8
             } else if (record->event.pressed) {
                 tap_code16(S(KC_RBRC)); // Intercept hold function to send *
-                tap_code(KC_LEFT); //to move inside
+                tap_code16(KC_LEFT); //to move inside
             }
 			return false;
          case OCPAR:
@@ -780,7 +814,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_9)); // Intercept tap function to send 9
             } else if (record->event.pressed) {
                 tap_code16(S(KC_0)); // Intercept hold function to send )
-                tap_code(KC_LEFT); //to move ide
+                tap_code16(KC_LEFT); //to move ide
             }
 			return false;
          case OCBRC:
@@ -788,38 +822,40 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                tap_code16(KC_LBRC); // Intercept hold function to send [
             } else if (record->event.pressed) {
                 tap_code16(KC_RBRC); // Intercept hold function to send ]
-                tap_code(KC_LEFT); //to move inside
+                tap_code16(KC_LEFT); //to move inside
             }
 			return false;
-
          case ASTPC:
             if (record->tap.count && record->event.pressed) {
-                send_string_with_delay_P(PSTR("*"), 10);
+                //send_string_with_delay_P(PSTR("*"), 10);
+                tap_code16(KC_ASTR);
             } else if (record->event.pressed) {
-                 send_string_with_delay_P(PSTR("%"), 10);
+                //send_string_with_delay_P(PSTR("%"), 10);
+                tap_code16(KC_PERC);
             }
 			return false;
          case CMALT:
             if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_COMM); // Intercept tap function to send ,
+                tap_code(KC_COMM); // Intercept tap function to send ,
             } else if (record->event.pressed) {
                 tap_code16(S(KC_COMM)); // Intercept hold function to send <
             }
 			return false;
          case DOTGT:
             if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_DOT); // Intercept tap function to send .
+                tap_code(KC_DOT); // Intercept tap function to send .
             } else if (record->event.pressed) {
                 tap_code16(S(KC_DOT)); // Intercept hold function to send >
             }
 			return false;
          case SCLCL:
             if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_SCLN); // Intercept tap function to send;
+                tap_code(KC_SCLN); // Intercept tap function to send;
             } else if (record->event.pressed) {
                 tap_code16(S(KC_SCLN)); // Intercept hold function to send :
             }
 			return false;
+            /*
          case LT(0,MY_WQ):
             if (record->tap.count && record->event.pressed) {
 			send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"'"SS_TAP(X_END)"',"SS_TAP(X_DOWN)), 10); //wrap a line in single quotes
@@ -827,16 +863,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"\""SS_TAP(X_END)"\","SS_TAP(X_DOWN)), 10); //wrap a line in double quotes
             }
 			return false;
+
          case LT(0,KC_BTN1):
             if (record->tap.count && record->event.pressed) {
                 tap_code16(KC_BTN1); // Intercept tap function to send 0
             } else if (record->event.pressed) {
                 register_code(KC_MS_BTN1); //Holds Left Mouse Button until another Left Mouse Button is tapped?.
             }
-			return false;
+			return false; */
+            //}
     }
 	return process_record_secrets(keycode, record);
-
-
 }
 
