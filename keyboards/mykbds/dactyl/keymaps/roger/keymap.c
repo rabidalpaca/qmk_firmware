@@ -13,7 +13,8 @@ enum combos {
   //sdfSTab,//replace
   odfDel,
   dfBsp,
-  //fgDel,//replace
+  n56Bsp,//replace
+  o56Del,
   fgLead,
   jkEnt,
   hjLead,
@@ -23,6 +24,8 @@ enum combos {
 //const uint16_t PROGMEM sdf_combo[] = {KC_S, KC_D, KC_F, COMBO_END};//replace
 const uint16_t PROGMEM odf_combo[] = {OSM(MOD_RSFT), KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM df_combo[] = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM o56_combo[] = {OSM(MOD_RSFT), KC_KP_5, KC_KP_6, COMBO_END};
+const uint16_t PROGMEM n56B_combo[] = {KC_KP_5, KC_KP_6, COMBO_END};
 const uint16_t PROGMEM fg_combo[] = {KC_F, KC_G, COMBO_END};
 const uint16_t PROGMEM jk_combo[] = {KC_J, KC_K, COMBO_END};
 const uint16_t PROGMEM jkl_combo[] = {KC_J, KC_K, KC_L, COMBO_END};
@@ -31,6 +34,8 @@ combo_t key_combos[] = {
   //[sdfSTab] = COMBO(sdf_combo, S(KC_TAB)), //replace
   [odfDel] = COMBO(odf_combo, KC_DEL),
   [dfBsp] = COMBO(df_combo, KC_BSPC),
+  [o56Del] = COMBO(o56_combo, KC_DEL),
+  [n56Bsp] = COMBO(n56B_combo, KC_BSPC),
   [fgLead] = COMBO(fg_combo, QK_LEAD),
   [jkEnt] = COMBO(jk_combo, KC_ENT),
   [hjLead] = COMBO(hj_combo, QK_LEAD),
@@ -50,7 +55,7 @@ combo_t key_combos[] = {
 #define OCPAR LT(0,KC_9) //( and )
 #define OCBRK LT(0,KC_8) //[ and ]
 #define OCBRC LT(0,KC_0) //{ and }
-#define QTDQT LT(0,KC_7) //single quote double quote
+#define QTDQT LT(0,KC_7) //single quote double quote,
 #define PLSMN LT(0,KC_6) //plus minus
 #define EQNEQ LT(0,KC_5) //equal not equal
 #define SLBSL LT(0,KC_4) //slash backslash
@@ -102,7 +107,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         GRVTI,  QESC,         KC_W,         KC_E,         KC_R,        KC_T,              KC_Y,        KC_U,         KC_I,         KC_O,   PAT,        QTDQT, //MY_QTMCR,LT(0,KC_ESC)
         ASTPC,  KC_A,         KC_S,         KC_D,         KC_F,        KC_G,              KC_H,        KC_J,         KC_K,         KC_L, SCLCL,        SLBSL, //MY_OPMCR, //LT(0,KC_QUOT),LT(0,KC_Q)
         EXCPI,  KC_Z,         KC_X,         KC_C,         KC_V,        KC_B,              KC_N,        KC_M,        CMALT,        DOTGT, QSUDR,OSM(MOD_RCTL), //MY_EQMCR, //LT(0,KC_BSLS),S(KC_SLSH),LT(0,KC_W),MY_EXMCR
-                               MO(_FUNC),       KC_SPC,   MO(_MOUS),          MO(_SYM),   KC_ENT,      OSM(MOD_RSFT)
+                               TT(_FUNC),       KC_SPC,   TT(_MOUS),          TT(_SYM),   KC_ENT,      OSM(MOD_RSFT)
 ),
 [_SYM] = LAYOUT_split_3x6_3(
 LT(0,KC_9),    LBDLR,      KC_KP_7,      KC_KP_8,      KC_KP_9,    PLSMN,      _______,       _______,      _______,      _______,      _______,      _______, //LT(0,KC_PPLS),
@@ -221,33 +226,39 @@ void leader_end_user(void) {
 }
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case ZDOT:
-            return TAPPING_TERM + 150;
-        case PAT:
-            return TAPPING_TERM + 150;
-        case QESC:
-            return TAPPING_TERM + 150;
-        case OSM(MOD_LSFT):
-            return TAPPING_TERM + 220;
-        case OSM(MOD_RSFT):
-            return TAPPING_TERM + 220;
-        case OSM(MOD_RALT):
-            return TAPPING_TERM + 220;
-        case OSM(MOD_RCTL):
-            return TAPPING_TERM + 220;
-        case OSM(MOD_RGUI):
-            return TAPPING_TERM + 220;
+        case LT(0,KC_T):
+            return TAPPING_TERM + 100;
+        case LT(0,KC_P):
+            return TAPPING_TERM + 100;
+        case LT(0,KC_Q):
+            return TAPPING_TERM + 100;
         default:
             return TAPPING_TERM;
     }
 }
+bool modlocked;
+
+
+bool get_combo_must_press_in_order(uint16_t combo_index, combo_t *combo) {
+    switch (combo_index) {
+        /* List combos here that you want to only activate if their keys
+         * are pressed in the same order as they are defined in the combo's key
+         * array. */
+        default:
+            return false;
+    }
+}
+
 
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case PAT:
+        case LT(0,KC_P):
+            // Do not select the hold action when another key is tapped.pppp@.>,<
+            return false;
+        case LT(0,KC_Q):
             // Do not select the hold action when another key is tapped.
             return false;
-        case QESC:
+        case LT(0,KC_7):
             // Do not select the hold action when another key is tapped.
             return false;
         default:
@@ -326,6 +337,30 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 uint8_t mod_state;
+
+void oneshot_locked_mods_changed_user(uint8_t mods) {
+    //if entering a lock state update led to red, else it will be blue
+  if (mods & MOD_MASK_SHIFT) {
+    modlocked = true;
+    rgblight_set_layer_state(5, true);
+  }
+  if (mods & MOD_MASK_CTRL) {
+    modlocked = true;
+    rgblight_set_layer_state(5, true);
+  }
+  if (mods & MOD_MASK_ALT) {
+    modlocked = true;
+    rgblight_set_layer_state(5, true);
+  }
+  if (mods & MOD_MASK_GUI) {
+    modlocked = true;
+    rgblight_set_layer_state(5, true);
+  }
+  if (!mods) {
+    modlocked = false;
+    rgblight_set_layer_state(5, false);
+  }
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         mod_state = get_mods();
@@ -718,7 +753,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(KC_SLASH);  //?
             } else if (record->event.pressed) {
                 //send_string_with_delay_P(PSTR("\\"), 10);
-                 tap_code16(KC_BSLS);  //
+                 tap_code16(KC_BSLS);  //r
             }
 			return false;
          case EQNEQ:
