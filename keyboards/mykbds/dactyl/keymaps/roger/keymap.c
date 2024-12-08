@@ -113,13 +113,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 LT(0,KC_9),    LBDLR,      KC_KP_7,      KC_KP_8,      KC_KP_9,    PLSMN,      _______,       _______,      _______,      _______,      _______,      _______, //LT(0,KC_PPLS),
 LT(0,KC_0),    CTAMP,      KC_KP_4,      KC_KP_5,      KC_KP_6,    EQNEQ,      _______,       _______,      _______,      _______,      _______,      _______,
 LT(0,KC_8),     ZDOT,      KC_KP_1,      KC_KP_2,      KC_KP_3,   KC_ENT,      _______, OSM(MOD_RSFT),OSM(MOD_RCTL),OSM(MOD_RALT),OSM(MOD_RGUI),      _______,
-                               _______,    _______,    _______,                      _______,     _______,   _______
+                               _______,    _______,    MO(_PSS),                      _______,     _______,   _______
 ),
 [_MOUS] = LAYOUT_split_3x6_3(
  XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_MUTE,       XXXXXXX,     XXXXXXX,  XXXXXXX,    XXXXXXX,     XXXXXXX,
  XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_VOLU,       KC_BTN1,     KC_MS_U,  KC_BTN2,    XXXXXXX,     XXXXXXX,
  XXXXXXX,   XXXXXXX,      XXXXXXX,      KC_LCTL,      KC_LSFT,          XXXXXXX,       KC_VOLD,       KC_MS_L,     KC_MS_D,  KC_MS_R,    XXXXXXX,     XXXXXXX,
-                                _______,      _______ ,    _______ ,          _______ ,  _______ ,  _______
+                                _______,      _______ ,    _______ ,          MO(_PSS) ,  _______ ,  _______
 )
 ,
 [_FUNC] = LAYOUT_split_3x6_3(
@@ -146,7 +146,8 @@ void leader_end_user(void) {
 		send_string_with_delay_P(PSTR("SELECT \n*\nFROM\n\nWHERE\n\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
     } else if (leader_sequence_two_keys(KC_A,KC_A)) {
         // Leader, a,a => Types the below string
-		send_string_with_delay_P(PSTR("SELECT\nCOUNT(*) as CntOf\nFROM\n\nWHERE\nGROUP BY\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
+		send_string_with_delay_P(PSTR("SELECT\nCOUNT(*) as CntOf\n"),10);
+        send_string_with_delay_P(PSTR("FROM\n\nWHERE\nGROUP BY\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
     } else if (leader_sequence_one_key(KC_S)) {
         // Leader, s => Types the below string
         send_string_with_delay_P(PSTR("\nINNER JOIN  AS B ON"), 10);
@@ -209,7 +210,7 @@ void leader_end_user(void) {
 		send_string_with_delay_P(PSTR("PROTBLPD."), 10);
     } else if (leader_sequence_three_keys(KC_J,KC_J,KC_J)) {
 		send_string_with_delay_P(PSTR("PROQUERY."), 10);
-    }else if (leader_sequence_one_key(KC_L)) {
+    } else if (leader_sequence_one_key(KC_L)) {
 		send_string_with_delay_P(PSTR("QS36F."), 10);
     } else if (leader_sequence_one_key(KC_K)) {
 		send_string_with_delay_P(PSTR("VTSINT."), 10);
@@ -219,8 +220,7 @@ void leader_end_user(void) {
 		send_string_with_delay_P(PSTR("ICORPDCD."), 10);
     } else if (leader_sequence_one_key(KC_N)) {
         send_string_with_delay_P(PSTR(SS_LGUI("r")), 10); //run
-    }
- else if (leader_sequence_two_keys(KC_N, KC_N)) {
+    } else if (leader_sequence_two_keys(KC_N, KC_N)) {
         send_string_with_delay_P(PSTR(SS_LGUI("l")), 10); //log out
     }
 }
