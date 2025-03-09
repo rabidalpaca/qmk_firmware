@@ -1,0 +1,3 @@
+COMB(dfSpc,                   KC_SPC,  KC_D, KC_F)
+COMB(sdfTab,                  KC_TAB,   KC_S,         KC_D,         KC_F)
+COMB(jkEnt,                   KC_ENT,  KC_J, KC_K)
