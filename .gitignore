@@ -1,3 +1,6 @@
+# Ignore per-keyboard secret files
+secrets.c
+secrets.h
 # Junk files
 *.bak
 *.swp
