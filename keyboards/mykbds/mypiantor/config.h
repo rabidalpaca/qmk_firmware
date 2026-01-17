@@ -1,0 +1,46 @@
+// Copyright 2022 beekeeb
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#pragma once
+#//include "config_common.h"
+
+#define RP2040_BOOTLOADER_DOUBLE_TAP_RESET
+#define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_TIMEOUT 1000U
+
+#define SERIAL_USART_FULL_DUPLEX
+#define SERIAL_USART_TX_PIN GP0
+#define SERIAL_USART_RX_PIN GP1
+
+#ifdef RGB_MATRIX_ENABLE
+#define WS2812_DI_PIN GP23
+#define DRIVER_LED_TOTAL 2
+#define RGB_MATRIX_LED_COUNT 2
+#define RGBLED_NUM 2
+#define WS2812_PIO_USE_PIO1
+#define RGBLED_SPLIT { 1, 1 }
+
+     /* Enable Framebuffer and keypress effects */
+#define RGB_MATRIX_FRAMEBUFFER_EFFECTS
+#define RGB_MATRIX_KEYPRESSES
+
+#define ENABLE_RGB_MATRIX_BREATHING
+/*#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 80*/
+
+#endif
+
+#define RGBLIGHT_LIMIT_VAL 64
+
+#define WS2812_PIO_USE_PIO1
+//#define TAPPING_TERM 250
+//#define COMBO_TERM 65
+
+//#define COMBO_COUNT 0
+#define MOUSEKEY_DELAY 50
+#define MOUSEKEY_INTERVAL 16
+#define MEDIA_KEY_DELAY 2
+
+#define USB_POLLING_INTERVAL_MS 1
+#define FORCE_NKRO
+
+#define SPLIT_LAYER_STATE_ENABLE
+#define SPLIT_LED_STATE_ENABLE

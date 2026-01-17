@@ -1,0 +1,29 @@
+//alphas
+COMB(SELW,              MY_SELW,       MY_SEL, MY_WHR)
+COMB(INSQ,              MY_INSQ,        MY_IN,  MY_SQ)
+COMB(INDQ,              MY_INDQ,        MY_IN,  MY_DQ)
+COMB(WHRSQ,            MY_WHRSQ,       MY_WHR,  MY_SQ)
+COMB(WHRDQ,            MY_WHRDQ,       MY_WHR,  MY_DQ)
+COMB(WHRB,              MY_WHRB,       MY_WHR,  MY_EQ)
+COMB(LKDQ,              MY_LKDQ,        MY_LK,  MY_SQ)
+COMB(ISNN,              MY_ISNN,       MY_ISN,  MY_SQ)
+COMB(LJN,                MY_LJN,        MY_JN,  MY_SQ)
+COMB(FJN,                MY_FJN,        MY_JN,  MY_DQ)
+COMB(CJN,                MY_CJN,        MY_JN,  MY_EQ)
+COMB(DECV,              MY_DECV,      MY_DECI,  MY_SQ)
+COMB(AGCT,              MY_AGCT,        MY_AG,  MY_SQ)
+COMB(AGAV,              MY_AGAV,        MY_AG,  MY_DQ)
+COMB(AGMN,              MY_AGMN,        MY_AG,  MY_EQ)
+COMB(JF_F23,             KC_F23,         KC_J,   KC_F)
+COMB(KD_F22,             KC_F22,         KC_K,   KC_D)
+COMB(GBSQ_HZ,             MY_HV,        MY_GB,  MY_SQ)
+
+
+
+
+
+
+
+
+
+

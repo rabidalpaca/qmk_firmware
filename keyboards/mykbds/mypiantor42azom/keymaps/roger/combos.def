@@ -1,0 +1,7 @@
+COMB(sdfBsp,                 KC_BSPC,   KC_S,   KC_D,   KC_F)
+COMB(dfSPC,                  KC_SPC,    KC_D,   KC_F)
+COMB(fgDel,                  KC_DEL,    KC_F,   KC_G)
+
+COMB(jkEnt,                  KC_ENT,    KC_J,   KC_K)
+COMB(jklTab,                 KC_TAB,    KC_J,   KC_K, KC_L)
+

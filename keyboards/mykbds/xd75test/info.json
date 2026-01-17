@@ -1,0 +1,34 @@
+{
+    "manufacturer": "Roger Young",
+    "keyboard_name": "MyHandWired",
+    "maintainer": "Roger Young",
+    "bootloader": "custom",
+    "features": {
+        "bootmagic": false,
+        "command": false,
+        "console": true,
+        "extrakey": false,
+        "mousekey": false,
+        "nkro": true
+    },
+	"diode_direction": "COL2ROW",
+    "matrix_pins": {
+		"cols": ["GP15"],
+        "rows": ["GP16","GP18"]
+    },
+    "processor": "RP2040",
+    "url": "",
+    "usb": {
+        "device_version": "1.0.0",
+        "pid": "0x07F8",
+        "vid": "0x0050"
+    },
+    "layouts": {
+        "LAYOUT": {
+            "layout": [
+                { "matrix": [0, 0], "y": 0, "x": 0 },
+				{ "matrix": [1, 0], "y": 1, "x": 0 }
+				]
+        }
+    }
+}

@@ -1,0 +1,66 @@
+//alphas
+COMB(qzA,                KC_A,   LT(_NUM,KC_Q), LSFT_T(KC_Z))
+COMB(wxS,                KC_S,   LT(_FUN,KC_W), LCTL_T(KC_X))
+COMB(ecD,                KC_D,   LT(_PSS,KC_E), LGUI_T(KC_C))
+COMB(rvF,                KC_F,   LT(_AHK1,KC_R), LALT_T(KC_V))
+COMB(tbG,                KC_G,            KC_T, KC_B)
+COMB(ynH,                KC_H,            KC_Y, KC_N)
+COMB(umJ,                KC_J,   LT(_AHK1,KC_U), RALT_T(KC_M))
+COMB(icmK,               KC_K,   LT(_PSS,KC_I), RGUI_T(KC_COMM))
+COMB(odtL,               KC_L,   LT(_FUN,KC_O), RCTL_T(KC_DOT))
+COMB(pslSCLN,         KC_SCLN,   LT(_NUM,KC_P), RSFT_T(KC_SLSH))
+COMB(bnSPC,            KC_SPC,            KC_B, KC_N)
+
+//ahk alphas
+COMB(qzRSA,        RSFT(KC_A),      RSFT(KC_Q), RSFT(KC_Z))
+COMB(wxRSS,        RSFT(KC_S),      RSFT(KC_W), RSFT(KC_X))
+COMB(ecRSD,        RSFT(KC_D),      RSFT(KC_E), RSFT(KC_C))
+COMB(rvRSF,        RSFT(KC_F),      RSFT(KC_R), RSFT(KC_V))
+COMB(tbRSG,        RSFT(KC_G),      RSFT(KC_T), RSFT(KC_B))
+COMB(ynRSH,        RSFT(KC_H),      RSFT(KC_Y), RSFT(KC_N))
+COMB(umRSJ,        RSFT(KC_J),      RSFT(KC_U), RSFT(KC_J))
+COMB(icmRSK,       RSFT(KC_K),      RSFT(KC_I), RSFT(KC_COMM))
+COMB(odtRSL,       RSFT(KC_L),      RSFT(KC_O), RSFT(KC_DOT))
+COMB(pslRSSCN,  RSFT(KC_SCLN),      RSFT(KC_P), RSFT(KC_SLSH))
+
+// Symbols
+COMB(x1x2GE,         KC_GRAVE,         KC_KP_1, KC_KP_2)
+COMB(x2x3TLDA,    S(KC_GRAVE),         KC_KP_2, KC_KP_3)
+COMB(x3x4PIP,         KC_PIPE,         KC_KP_3, KC_KP_4)
+COMB(x4x5UDS,         KC_UNDS,         KC_KP_4, KC_KP_5)
+COMB(x8x9CBR,         KC_CRBR,         KC_KP_8, KC_KP_9)
+COMB(x9x0SBR,         KC_SQBR,         KC_KP_9, KC_KP_0)
+
+COMB(x1PLUS,          KC_PPLS,         S(KC_1), KC_KP_1)
+COMB(x2MNUS,          KC_PMNS,         S(KC_2), KC_KP_2)
+COMB(x3EQL,            KC_EQL,         S(KC_3), KC_KP_3)
+COMB(x4LT,         S(KC_COMM),         S(KC_4), KC_KP_4)
+COMB(x5GT,          S(KC_DOT),         S(KC_5), KC_KP_5)
+COMB(x6SQU,           KC_QUOT,         S(KC_6), KC_KP_6)
+COMB(x7DQU,        S(KC_QUOT),         S(KC_7), KC_KP_7)
+COMB(x8COLN,          KC_COLN,         S(KC_8), KC_KP_8)
+COMB(x9QST,        S(KC_SLSH),         S(KC_9), KC_KP_9)
+COMB(x0BSLS,          KC_BSLS,         S(KC_0), KC_KP_0)
+
+//control
+COMB(qwESC,            KC_ESC,   LT(_NUM,KC_Q), LT(_FUN,KC_W))
+COMB(tyENT,            KC_ENT,            KC_T, KC_Y)
+COMB(updownENT,        KC_ENT,           KC_UP, KC_DOWN)
+COMB(opBSPC,          KC_BSPC,   LT(_FUN,KC_O), LT(_NUM,KC_P))
+COMB(ioDEL,            KC_DEL,   LT(_PSS,KC_I), LT(_FUN,KC_O))
+COMB(weTAB,            KC_TAB,   LT(_FUN,KC_W), LT(_PSS,KC_E))
+
+COMB(ps21,      KC_SECRET_21,   KC_SECRET_11,KC_SECRET_1)
+COMB(ps22,      KC_SECRET_22,   KC_SECRET_12,KC_SECRET_2)
+COMB(ps23,      KC_SECRET_23,   KC_SECRET_13,KC_SECRET_3)
+COMB(ps24,      KC_SECRET_24,   KC_SECRET_14,KC_SECRET_4)
+COMB(ps25,      KC_SECRET_25,   KC_SECRET_15,KC_SECRET_5)
+COMB(ps26,      KC_SECRET_26,   KC_SECRET_16,KC_SECRET_6)
+COMB(ps27,      KC_SECRET_27,   KC_SECRET_17,KC_SECRET_7)
+COMB(ps28,      KC_SECRET_28,   KC_SECRET_18,KC_SECRET_8)
+COMB(ps29,      KC_SECRET_29,   KC_SECRET_19,KC_SECRET_9)
+COMB(ps30,      KC_SECRET_30,   KC_SECRET_20,KC_SECRET_10)
+
+
+
+
