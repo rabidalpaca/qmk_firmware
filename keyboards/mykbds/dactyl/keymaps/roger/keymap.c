@@ -401,6 +401,16 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     rgblight_set_layer_state(3, layer_state_cmp(state, _FUNC));
     rgblight_set_layer_state(4, layer_state_cmp(state, _PSS));
 
+    // Debug: print active layer when it changes (requires CONSOLE_ENABLE)
+#ifdef CONSOLE_ENABLE
+    static uint8_t last_active = 0xFF;
+    uint8_t active = biton32(state);
+    if (active != last_active) {
+        uprintf("layer_state_set_user: active=%u (state=0x%08X)\n", active, state);
+        last_active = active;
+    }
+#endif
+
     return state;
 }
 
