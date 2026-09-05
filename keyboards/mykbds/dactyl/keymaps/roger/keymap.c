@@ -1,5 +1,9 @@
 #include QMK_KEYBOARD_H
 
+// Note: Tri-layer behavior centralised in `layer_state_set_user`.
+// _SYM + _MOUS -> _PSS. Using `MO(...)` (momentary) for layers
+// makes tri-layer behavior simpler and more predictable than `TT(...)`.
+
 // Defines names for use in layer keycodes and the keymap5
 enum layer_names {
     _QWERTY = 0,
@@ -118,7 +122,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         GRVTI,  QESC,         KC_W,         KC_E,         KC_R,        KC_T,              KC_Y,        KC_U,         KC_I,         KC_O,   PAT,        QTDQT, //MY_QTMCR,LT(0,KC_ESC)
         ASTPC,  KC_A,         KC_S,         KC_D,         KC_F,        KC_G,              KC_H,        KC_J,         KC_K,         KC_L, SCLCL,        SLBSL, //MY_OPMCR, //LT(0,KC_QUOT),LT(0,KC_Q)
         EXCPI,  KC_Z,         KC_X,         KC_C,         KC_V,        KC_B,              KC_N,        KC_M,        CMALT,        DOTGT, QSUDR,OSM(MOD_RCTL), //MY_EQMCR, //LT(0,KC_BSLS),S(KC_SLSH),LT(0,KC_W),MY_EXMCR
-                            OSM(MOD_RALT),       KC_SPC,   TT(_MOUS),          TT(_SYM),   KC_ENT,      OSM(MOD_RSFT)
+                            OSM(MOD_RALT),       KC_SPC,   MO(_MOUS),          MO(_SYM),   KC_ENT,      OSM(MOD_RSFT)
 ),
 [_SYM] = LAYOUT_split_3x6_3(
 LT(0,KC_9),    LBDLR,      KC_KP_7,      KC_KP_8,      KC_KP_9,    PLSMN,      XXXXXXX,       XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX, //LT(0,KC_PPLS),
@@ -530,253 +534,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-            case MY_SYSMCR:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-			        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_UP(X_LSFT)), 10);
-                    send_string_with_delay_P(PSTR("SELECT tab.TABLE_SCHEMA, tab.TABLE_NAME, col.COLUMN_NAME, col.ORDINAL_POSITION, \n"), 10);
-                    send_string_with_delay_P(PSTR("col.DATA_TYPE, col.LENGTH, col.NUMERIC_SCALE \n"), 10);
-                    send_string_with_delay_P(PSTR("FROM QSYS2.SYSTABLES tab \n"), 10);
-                    send_string_with_delay_P(PSTR("INNER JOIN QSYS2.SYSCOLUMNS col \n"), 10);
-                    send_string_with_delay_P(PSTR("ON tab.TABLE_NAME = col.TABLE_NAME \n"), 10);
-                    send_string_with_delay_P(PSTR("WHERE col.COLUMN_NAME like '%%' \n"), 10);
-                    send_string_with_delay_P(PSTR("AND tab.TABLE_NAME like '%%' \n"), 10);
-                    send_string_with_delay_P(PSTR("AND tab.TABLE_SCHEMA like '%%' \n"), 10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-                    send_string_with_delay_P(PSTR("SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION, \n"), 10);
-                    send_string_with_delay_P(PSTR("DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE \n"), 10);
-                    send_string_with_delay_P(PSTR("FROM [INFORMATION_SCHEMA].[COLUMNS] \n"), 10);
-                    send_string_with_delay_P(PSTR("WHERE COLUMN_NAME like '%%' \n"), 10);
-                    send_string_with_delay_P(PSTR("AND TABLE_NAME like '%%' \n"), 10);
-                    send_string_with_delay_P(PSTR("AND TABLE_SCHEMA like '%%' \n"), 10);
-                }
-            }
-            return false;
-
-          case MY_GBMCR:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" GROUP BY \n"),10);
-                    }
-                    if (get_repeat_key_count() == 2){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" HAVING \n"),10);
-                    }
-                    if (get_repeat_key_count() == 3){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" ORDER BY "),10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-			        send_string_with_delay_P(PSTR("\n ORDER BY "), 10);
-                }
-            }
-            return false;
-          case MY_SCHMC1:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" QSYS2. ,"),10);
-                    }
-                    if (get_repeat_key_count() == 2){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" SYSIBM. ,"),10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-			        send_string_with_delay_P(PSTR("\n QS36F. ,"), 10);
-                }
-            }
-            return false;
-          case MY_SCHMC2:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" PROTBLPD. ,"),10);
-                    }
-                    if (get_repeat_key_count() == 2){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" PROQUERY. ,"),10);
-                    }
-                    if (get_repeat_key_count() == 3){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" QSYS2. ,"),10);
-                    }
-                    if (get_repeat_key_count() == 4){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" SYSIBM. ,"),10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-			        send_string_with_delay_P(PSTR("\n PRODTAPD. ,"), 10);
-                }
-            }
-            return false;
-          case MY_SCHMC4:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" QS36F. ,"),10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-			        send_string_with_delay_P(PSTR("\n DBO. ,"), 10);
-                }
-            }
-            return false;
-          case MY_SCHMC3:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" ICORPD. ,"),10);
-                    }
-                    if (get_repeat_key_count() == 2){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" ICORPDCD. ,"),10);
-                    }
-                    if (get_repeat_key_count() == 3){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" QSYS2. ,"),10);
-                    }
-                    if (get_repeat_key_count() == 4){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" SYSIBM. ,"),10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-			        send_string_with_delay_P(PSTR("\n VTSINT. ,"), 10);
-                }
-            }
-            return false;
-          case MY_AGMCR:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-			        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_END)SS_UP(X_LSFT)" "SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT) ", AVG() as AvgOf "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
-                    }
-                    if (get_repeat_key_count() == 2){
-			        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_END)SS_UP(X_LSFT)" "SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT) ", MAX() as MaxOf "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
-                    }
-                    if (get_repeat_key_count() == 3){
-			        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_END)SS_UP(X_LSFT)" "SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT) ", MIN() as MinOf "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-			        send_string_with_delay_P(PSTR(" COUNT(*) as CntOf "), 10);
-                }
-            }
-            return false;
-          case MY_SLMC1:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                            send_string_with_delay_P(PSTR("*\n"SS_TAP(X_TAB)),10);//send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)), 15);
-                    }
-                    if (get_repeat_key_count() == 2){
-                            send_string_with_delay_P(PSTR("FROM\n\n"SS_TAP(X_TAB)),10);//send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)), 15);
-                    }
-                    if (get_repeat_key_count() == 3){
-                            send_string_with_delay_P(PSTR("WHERE\n"SS_TAP(X_TAB)),10);//send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)), 15);
-                    }
-                    if (get_repeat_key_count() == 4){
-                            send_string_with_delay_P(PSTR("ORDER BY 1\n"SS_TAP(X_TAB)),10);//send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)), 15);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-                        send_string_with_delay_P(PSTR("SELECT\n"SS_TAP(X_TAB)),10);
-                }
-            }
-            return false;
-          case MY_SLMC2:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                            send_string_with_delay_P(PSTR("COUNT(*) as cnt\n"SS_TAP(X_TAB)),10);//send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)), 15);
-                    }
-                    if (get_repeat_key_count() == 2){
-                            send_string_with_delay_P(PSTR("FROM\n\n"SS_TAP(X_TAB)),10);//send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)), 15);
-                    }
-                    if (get_repeat_key_count() == 3){
-                            send_string_with_delay_P(PSTR(" WHERE \n"SS_TAP(X_TAB)"GROUP BY\n"SS_TAP(X_TAB)),10);//send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)), 15);
-                    }
-                    if (get_repeat_key_count() == 4){
-                            send_string_with_delay_P(PSTR("HAVING\n"SS_TAP(X_TAB)"ORDER BY 1\n"SS_TAP(X_TAB)),10);//send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)), 15);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-                        send_string_with_delay_P(PSTR("SELECT\n"SS_TAP(X_TAB)),10);
-                }
-            }
-            return false;
-          case MY_JNMCR:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)"LEFT OUTER JOIN "),10);
-                    }
-                    if (get_repeat_key_count() == 2){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)"FULL OUTER JOIN "),10);
-                    }
-                    if (get_repeat_key_count() == 3){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)"CROSS JOIN "),10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-                    send_string_with_delay_P(PSTR("\nINNER JOIN  AS B ON"), 10);
-                }
-            }
-            return false;
-          case MY_WHMCR:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" != "),10);
-                    }
-                    if (get_repeat_key_count() == 2){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" Like '%' "),10);
-                    }
-                    if (get_repeat_key_count() == 3){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" IS NULL "),10);
-                    }
-                    if (get_repeat_key_count() == 4){
-                        send_string_with_delay_P(PSTR(SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)" BETWEEN AND "),10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-                   send_string_with_delay_P(PSTR("WHERE \n"), 10);
-                   send_string_with_delay_P(PSTR(" ="), 10);
-                }
-            }
-            return false;
-                        */
         case GRVTI:
             if (record->tap.count && record->event.pressed) {
                 //send_string_with_delay_P(PSTR("`"), 10);
@@ -875,25 +632,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_QUOT));  //"
             }
 			return false;
-            /*
-         case BCTRA:
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_B); // Intercept tap function to send a
-            } else if (record->event.pressed) {
-                rgblight_blink_layer(5, 500);
-                tap_code16(C(KC_A)); // Intercept hold to select all
-            }
-			return false;
-
-         case XCTRX:
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_X); // Intercept tap function to send x
-            } else if (record->event.pressed) {
-                rgblight_blink_layer(5, 500);
-                tap_code16(C(KC_X)); // Intercept hold top cut
-            }
-			return false;
-            */
+            
          case PAT:
             if (record->tap.count && record->event.pressed) {
                 tap_code(KC_P); // Intercept tap function to send x p
@@ -901,24 +640,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_2)); // Intercept hold @
             }
 			return false;
-            /*
-         case CCTRC:
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_C); // Intercept tap function to send c
-            } else if (record->event.pressed) {
-                rgblight_blink_layer(5, 500);
-                tap_code16(C(KC_C)); // Intercept hold to copy
-            }
-			return false;
-
-         case VCTRV:
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_V); // Intercept tap function to send v
-            } else if (record->event.pressed) {
-                rgblight_blink_layer(5, 500);
-                tap_code16(C(KC_V)); // Intercept hold function to paste
-            }
-			return false;            */
+            
          case OCBRK:
             if (record->tap.count && record->event.pressed) {
                 tap_code16(S(KC_LBRC)); // Intercept tap function to send 8
@@ -973,22 +695,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_SCLN)); // Intercept hold function to send :
             }
 			return false;
-            /*
-         case LT(0,MY_WQ):
-            if (record->tap.count && record->event.pressed) {
-			send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"'"SS_TAP(X_END)"',"SS_TAP(X_DOWN)), 10); //wrap a line in single quotes
-            } else if (record->event.pressed) {
-			send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"\""SS_TAP(X_END)"\","SS_TAP(X_DOWN)), 10); //wrap a line in double quotes
-            }
-			return false;
-
-         case LT(0,KC_BTN1):
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_BTN1); // Intercept tap function to send 0
-            } else if (record->event.pressed) {
-                register_code(KC_MS_BTN1); //Holds Left Mouse Button until another Left Mouse Button is tapped?.
-            }
-			return false; */
+            
             //}
     }
 	return process_record_secrets(keycode, record);
