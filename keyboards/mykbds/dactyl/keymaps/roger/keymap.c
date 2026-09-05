@@ -146,88 +146,167 @@ MY_31,                 MY_26,    MY_24,     MY_3,        MY_22,               MY
 )
 };
 
-void leader_start_user(void) {
-    // Do something when the leader key is pressed
+#define SEND_SQL(x) send_string_with_delay_P(PSTR(x), 10)
+
+static void sql_select_template(void) {
+    SEND_SQL("SELECT \n*\nFROM\n\nWHERE\n\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP));
+}
+
+static void sql_count_select_template(void) {
+    SEND_SQL("SELECT\nCOUNT(*) as CntOf\n");
+    SEND_SQL("FROM\n\nWHERE\nGROUP BY\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP));
+}
+
+static void sql_inner_join(void) {
+    SEND_SQL("\nINNER JOIN  AS B ON");
+}
+
+static void sql_left_outer_join(void) {
+    SEND_SQL("\nLEFT OUTER JOIN  AS B ON");
+}
+
+static void sql_where_equals(void) {
+    SEND_SQL("\nWHERE  = "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+}
+
+static void sql_where_in(void) {
+    SEND_SQL("\nWHERE  IN ()"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+}
+
+static void sql_where_like(void) {
+    SEND_SQL("\nWHERE  LIKE '%'"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+}
+
+static void sql_where_is_null(void) {
+    SEND_SQL("\nWHERE  IS NULL"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+}
+
+static void sql_where_between(void) {
+    SEND_SQL("\nWHERE  IS BETWEEN  AND"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+}
+
+static void sql_count_as(void) {
+    SEND_SQL("COUNT(*) as CntOf,\n");
+}
+
+static void sql_max_as(void) {
+    SEND_SQL("MAX(*) as MaxOf,\n");
+}
+
+static void sql_min_as(void) {
+    SEND_SQL("MIN(*) as MinOf,\n");
+}
+
+static void sql_declare_columns_search(void) {
+    SEND_SQL("DECLARE @col NVARCHAR(200) = NULL; -- set to search text or leave NULL\n");
+    SEND_SQL("DECLARE @tbl NVARCHAR(200) = NULL;\n");
+    SEND_SQL("DECLARE @sch NVARCHAR(200) = NULL;\n");
+    SEND_SQL("DECLARE @dtype NVARCHAR(100) = NULL; -- optional data type filter\n\n");
+    SEND_SQL("SELECT TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION, \n");
+    SEND_SQL("       DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, IS_NULLABLE, COLUMN_DEFAULT\n");
+    SEND_SQL("FROM INFORMATION_SCHEMA.COLUMNS\n");
+    SEND_SQL("WHERE (@col   IS NULL OR COLUMN_NAME LIKE '%%' + @col + '%%')\n");
+    SEND_SQL("  AND (@tbl   IS NULL OR TABLE_NAME  LIKE '%%' + @tbl + '%%')\n");
+    SEND_SQL("  AND (@sch   IS NULL OR TABLE_SCHEMA LIKE '%%' + @sch + '%%')\n");
+    SEND_SQL("  AND (@dtype IS NULL OR DATA_TYPE    = @dtype)\n");
+    SEND_SQL("ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION");
+    SEND_SQL(SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP));
+}
+
+static void sql_search_procs(void) {
+    SEND_SQL("-- Search for text inside stored procedure definitions\n");
+    SEND_SQL("DECLARE @search NVARCHAR(200) = ''\n");
+    SEND_SQL("SELECT o.name    AS object_name,\n");
+    SEND_SQL("       s.name    AS schema_name,\n");
+    SEND_SQL("       m.definition\n");
+    SEND_SQL("FROM sys.sql_modules m\n");
+    SEND_SQL("JOIN sys.objects   o ON m.object_id = o.object_id\n");
+    SEND_SQL("JOIN sys.schemas   s ON o.schema_id = s.schema_id\n");
+    SEND_SQL("WHERE m.definition LIKE '%%' + @search + '%%'\n");
+    SEND_SQL("  AND o.type IN ('P','PC') -- P = SQL Stored Procedure, PC = Assembly (CLR) Stored Proc\n");
+    SEND_SQL("ORDER BY s.name, o.name\n");
+    SEND_SQL(SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP));
+}
+
+static void sql_declare_int(void) {
+    SEND_SQL("DECLARE @int INT = ");
+}
+
+static void sql_declare_str(void) {
+    SEND_SQL("DECLARE @str VARCHAR(50) = ''"SS_TAP(X_LEFT));
+}
+
+static void sql_wrap_single_quotes(void) {
+    SEND_SQL(SS_TAP(X_HOME)"'"SS_TAP(X_END)"',"SS_TAP(X_DOWN));
+}
+
+static void sql_wrap_double_quotes(void) {
+    SEND_SQL(SS_TAP(X_HOME)"\""SS_TAP(X_END)"\","SS_TAP(X_DOWN));
+}
+
+static void sql_dbo(void) {
+    SEND_SQL("DBO.");
+}
+
+static void sql_run(void) {
+    SEND_SQL(SS_LGUI("r"));
+}
+
+static void sql_logout(void) {
+    SEND_SQL(SS_LGUI("l"));
+}
+
+static void sql_line_comma(void) {
+    SEND_SQL(SS_TAP(X_END)","SS_TAP(X_DOWN));
 }
 
 void leader_end_user(void) {
     if (leader_sequence_one_key(KC_Y)) {
-        // Leader, a => Types the below string
-		send_string_with_delay_P(PSTR("SELECT \n*\nFROM\n\nWHERE\n\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
-    } else if (leader_sequence_two_keys(KC_Y,KC_Y)) {
-        // Leader, a,a => Types the below string
-		send_string_with_delay_P(PSTR("SELECT\nCOUNT(*) as CntOf\n"),10);
-        send_string_with_delay_P(PSTR("FROM\n\nWHERE\nGROUP BY\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
+        sql_select_template();
+    } else if (leader_sequence_two_keys(KC_Y, KC_Y)) {
+        sql_count_select_template();
     } else if (leader_sequence_one_key(KC_H)) {
-        // Leader, s => Types the below string
-        send_string_with_delay_P(PSTR("\nINNER JOIN  AS B ON"), 10);
+        sql_inner_join();
     } else if (leader_sequence_two_keys(KC_H, KC_H)) {
-        // Leader, s => Types the below string
-        send_string_with_delay_P(PSTR("\nLEFT OUTER JOIN  AS B ON"), 10);
+        sql_left_outer_join();
     } else if (leader_sequence_one_key(KC_N)) {
-        // Leader, s => Types the below string
-        send_string_with_delay_P(PSTR("\nWHERE  = "SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+        sql_where_equals();
     } else if (leader_sequence_two_keys(KC_N, KC_N)) {
-        // Leader, d, d => Ctrl+A, Ctrl+C
-        send_string_with_delay_P(PSTR("\nWHERE  IN ()"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+        sql_where_in();
     } else if (leader_sequence_three_keys(KC_N, KC_N, KC_N)) {
-        // Leader, d, d => Ctrl+A, Ctrl+C
-        send_string_with_delay_P(PSTR("\nWHERE  LIKE '%'"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+        sql_where_like();
     } else if (leader_sequence_four_keys(KC_N, KC_N, KC_N, KC_N)) {
-        // Leader, d, d, s => Types the below string
-        send_string_with_delay_P(PSTR("\nWHERE  IS NULL"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+        sql_where_is_null();
     } else if (leader_sequence_five_keys(KC_N, KC_N, KC_N, KC_N, KC_N)) {
-        // Leader, d, d, s => Types the below string
-        send_string_with_delay_P(PSTR("\nWHERE  IS BETWEEN  AND"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)), 10);
+        sql_where_between();
     } else if (leader_sequence_one_key(KC_U)) {
-        send_string_with_delay_P(PSTR("COUNT(*) as CntOf,\n"), 10);
-    } else if (leader_sequence_two_keys(KC_U,KC_U)) {
-        send_string_with_delay_P(PSTR("MAX(*) as MaxOf,\n"), 10);
-    } else if (leader_sequence_three_keys(KC_U,KC_U,KC_U)) {
-        send_string_with_delay_P(PSTR("MIN(*) as MinOf,\n"), 10);
+        sql_count_as();
+    } else if (leader_sequence_two_keys(KC_U, KC_U)) {
+        sql_max_as();
+    } else if (leader_sequence_three_keys(KC_U, KC_U, KC_U)) {
+        sql_min_as();
     } else if (leader_sequence_one_key(KC_J)) {
-        send_string_with_delay_P(PSTR("DECLARE @col NVARCHAR(200) = NULL; -- set to search text or leave NULL\n"), 10);
-        send_string_with_delay_P(PSTR("DECLARE @tbl NVARCHAR(200) = NULL;\n"), 10);
-        send_string_with_delay_P(PSTR("DECLARE @sch NVARCHAR(200) = NULL;\n"), 10);
-        send_string_with_delay_P(PSTR("DECLARE @dtype NVARCHAR(100) = NULL; -- optional data type filter\n\n"), 10);
-        send_string_with_delay_P(PSTR("SELECT TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION, \n"), 10);
-        send_string_with_delay_P(PSTR("       DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, IS_NULLABLE, COLUMN_DEFAULT\n"), 10);
-        send_string_with_delay_P(PSTR("FROM INFORMATION_SCHEMA.COLUMNS\n"), 10);
-        send_string_with_delay_P(PSTR("WHERE (@col   IS NULL OR COLUMN_NAME LIKE '%%' + @col + '%%')\n"), 10);
-        send_string_with_delay_P(PSTR("  AND (@tbl   IS NULL OR TABLE_NAME  LIKE '%%' + @tbl + '%%')\n"), 10);
-        send_string_with_delay_P(PSTR("  AND (@sch   IS NULL OR TABLE_SCHEMA LIKE '%%' + @sch + '%%')\n"), 10);
-        send_string_with_delay_P(PSTR("  AND (@dtype IS NULL OR DATA_TYPE    = @dtype)\n"), 10);
-        send_string_with_delay_P(PSTR("ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION"), 10);
-        send_string_with_delay_P(PSTR(SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
+        sql_declare_columns_search();
     } else if (leader_sequence_two_keys(KC_J, KC_J)) {
-        send_string_with_delay_P(PSTR("-- Search for text inside stored procedure definitions\n"), 10);
-        send_string_with_delay_P(PSTR("DECLARE @search NVARCHAR(200) = ''\n"), 10);
-        send_string_with_delay_P(PSTR("SELECT o.name    AS object_name,\n"), 10);
-        send_string_with_delay_P(PSTR("       s.name    AS schema_name,\n"), 10);
-        send_string_with_delay_P(PSTR("       m.definition\n"), 10);
-        send_string_with_delay_P(PSTR("FROM sys.sql_modules m\n"), 10);
-        send_string_with_delay_P(PSTR("JOIN sys.objects   o ON m.object_id = o.object_id\n"), 10);
-        send_string_with_delay_P(PSTR("JOIN sys.schemas   s ON o.schema_id = s.schema_id\n"), 10);
-        send_string_with_delay_P(PSTR("WHERE m.definition LIKE '%%' + @search + '%%'\n"), 10);
-        send_string_with_delay_P(PSTR("  AND o.type IN ('P','PC') -- P = SQL Stored Procedure, PC = Assembly (CLR) Stored Proc\n"), 10);
-        send_string_with_delay_P(PSTR("ORDER BY s.name, o.name\n"), 10);
-                send_string_with_delay_P(PSTR(SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)), 10);
+        sql_search_procs();
     } else if (leader_sequence_one_key(KC_M)) {
-		send_string_with_delay_P(PSTR("DECLARE @int INT = "), 10);
+        sql_declare_int();
     } else if (leader_sequence_two_keys(KC_M, KC_M)) {
-		send_string_with_delay_P(PSTR("DECLARE @str VARCHAR(50) = ''"SS_TAP(X_LEFT)), 10);
+        sql_declare_str();
     } else if (leader_sequence_one_key(KC_R)) {
-		send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"'"SS_TAP(X_END)"',"SS_TAP(X_DOWN)), 10); //wrap a line in single quotes
-    } else if (leader_sequence_two_keys(KC_R,KC_R)) {
-		send_string_with_delay_P(PSTR(SS_TAP(X_HOME)"\""SS_TAP(X_END)"\","SS_TAP(X_DOWN)), 10); //wrap a line in double quotes
+        sql_wrap_single_quotes();
+    } else if (leader_sequence_two_keys(KC_R, KC_R)) {
+        sql_wrap_double_quotes();
     } else if (leader_sequence_one_key(KC_F)) {
-		send_string_with_delay_P(PSTR("DBO."), 10);
+        sql_dbo();
     } else if (leader_sequence_one_key(KC_V)) {
-        send_string_with_delay_P(PSTR(SS_LGUI("r")), 10); //run
+        sql_run();
     } else if (leader_sequence_two_keys(KC_V, KC_V)) {
-        send_string_with_delay_P(PSTR(SS_LGUI("l")), 10); //log out
+        sql_logout();
     } else if (leader_sequence_three_keys(KC_V, KC_V, KC_V)) {
         tap_code16(C(A(KC_DEL)));
+    } else if (leader_sequence_one_key(KC_T)) {
+        sql_line_comma();
     }
 }
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
@@ -314,10 +393,14 @@ layer_state_t default_layer_state_set_user(layer_state_t state) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
+    // Let QMK compute the tri-layer state (SYM + MOUS -> PSS)
+    state = update_tri_layer_state(state, _SYM, _MOUS, _PSS);
+
     rgblight_set_layer_state(1, layer_state_cmp(state, _SYM));
     rgblight_set_layer_state(2, layer_state_cmp(state, _MOUS));
     rgblight_set_layer_state(3, layer_state_cmp(state, _FUNC));
     rgblight_set_layer_state(4, layer_state_cmp(state, _PSS));
+
     return state;
 }
 
@@ -373,24 +456,6 @@ void oneshot_locked_mods_changed_user(uint8_t mods) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         mod_state = get_mods();
         switch (keycode) {
-              case MO(_SYM):
-                    if (record->event.pressed) {
-                        layer_on(_SYM);
-                        update_tri_layer(_SYM, _MOUS, _PSS);
-                    } else {
-                        layer_off(_SYM);
-                        update_tri_layer(_SYM, _MOUS, _PSS);
-                    }
-                    return false;
-                case MO(_MOUS):
-                    if (record->event.pressed) {
-                        layer_on(_MOUS);
-                        update_tri_layer(_SYM, _MOUS, _PSS);
-                    } else {
-                        layer_off(_MOUS);
-                        update_tri_layer(_SYM, _MOUS, _PSS);
-                    }
-                    return false;
           case MS_SFTLC:
             if (record->event.pressed) {
                     // when keycode  is pressed
