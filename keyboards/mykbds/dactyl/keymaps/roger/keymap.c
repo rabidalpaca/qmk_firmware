@@ -1,5 +1,19 @@
 #include QMK_KEYBOARD_H
 
+enum repeat_line_keycodes {
+    SQL_REPEAT_SINGLE = MS_CTLLC + 1,
+    SQL_REPEAT_DOUBLE,
+    SQL_REPEAT_COMMA,
+    TRAINING_TOGGLE,
+    SQL_REPEAT_DELETE_ROW,
+};
+
+// Runtime only: reconnecting or resetting always starts in normal mode.
+static bool training_mode;
+bool keyboard_training_enabled(void) {
+    return training_mode;
+}
+
 // Note: Tri-layer behavior centralised in `layer_state_set_user`.
 // _SYM + _MOUS -> _PSS. Using `MO(...)` (momentary) for layers
 // makes tri-layer behavior simpler and more predictable than `TT(...)`.
@@ -36,8 +50,8 @@ const uint16_t PROGMEM n56B_combo[] = {KC_KP_5, KC_KP_6, COMBO_END};
 const uint16_t PROGMEM jk_combo[] = {KC_J, KC_K, COMBO_END};
 const uint16_t PROGMEM jkl_combo[] = {KC_J, KC_K, KC_L, COMBO_END};
 const uint16_t PROGMEM fj_combo[] = {KC_F, KC_J, COMBO_END};
-const uint16_t PROGMEM vb_combo[] = {KC_V, KC_B, COMBO_END};
-const uint16_t PROGMEM cv_combo[] = {KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM vb_combo[] = {KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM cv_combo[] = {KC_X, KC_C, COMBO_END};
 combo_t key_combos[] = {
   //[sdfSTab] = COMBO(sdf_combo, S(KC_TAB)), //replace
   [odfDel] = COMBO(odf_combo, KC_DEL),
@@ -63,8 +77,8 @@ combo_t key_combos[] = {
 #define LBDLR LT(0,KC_E)
 #define CTAMP LT(0,KC_R)
 #define OCPAR LT(0,KC_9) //( and )
-#define OCBRK LT(0,KC_8) //[ and ]
-#define OCBRC LT(0,KC_0) //{ and }
+#define OCBRC LT(0,KC_8) //{ and }
+#define OCBRK LT(0,KC_0) //[ and ]
 #define QTDQT LT(0,KC_7) //single quote double quote,
 #define PLSMN LT(0,KC_6) //plus minus
 #define EQNEQ LT(0,KC_5) //equal not equal
@@ -115,8 +129,6 @@ combo_t key_combos[] = {
 #define MY_36 KC_SECRET_36
 
 
-
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_QWERTY] = LAYOUT_split_3x6_3(
         GRVTI,  QESC,         KC_W,         KC_E,         KC_R,        KC_T,              KC_Y,        KC_U,         KC_I,         KC_O,   PAT,        QTDQT, //MY_QTMCR,LT(0,KC_ESC)
@@ -128,19 +140,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 LT(0,KC_9),    LBDLR,      KC_KP_7,      KC_KP_8,      KC_KP_9,    PLSMN,      XXXXXXX,       XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX, //LT(0,KC_PPLS),
 LT(0,KC_0),    CTAMP,      KC_KP_4,      KC_KP_5,      KC_KP_6,    EQNEQ,      XXXXXXX,       XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,
 LT(0,KC_8),     ZDOT,      KC_KP_1,      KC_KP_2,      KC_KP_3,   KC_ENT,      XXXXXXX, OSM(MOD_RSFT),OSM(MOD_RCTL),OSM(MOD_RALT),OSM(MOD_RGUI),      XXXXXXX,
-                               QK_LLCK,    MO(_FUNC),    MO(_PSS),                      _______,     _______,   _______
+                               QK_LLCK,    MO(_FUNC),    _______,                      _______,     _______,   _______
 ),
 [_MOUS] = LAYOUT_split_3x6_3(
- XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_MUTE,           VDB,   XXXXXXX,        VDF,      XXXXXXX,     XXXXXXX,
- XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_VOLU,       MS_BTN1,     MS_UP,    MS_BTN2,      XXXXXXX,     MS_WHLU,
- XXXXXXX,   XXXXXXX,      XXXXXXX,      KC_LCTL,      KC_LSFT,          XXXXXXX,       KC_VOLD,       MS_LEFT,   MS_DOWN,    MS_RGHT,      XXXXXXX,     MS_WHLD,
-                                _______,      _______ ,    _______ ,          MO(_PSS) ,  _______ ,  QK_LLCK
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       KC_MUTE,           XXXXXXX,   XXXXXXX,        XXXXXXX,      XXXXXXX,     XXXXXXX,
+C(KC_A),   C(KC_Z),      C(KC_C),      C(KC_X),      C(KC_V),          XXXXXXX,       KC_VOLU,       MS_BTN1,     MS_UP,    MS_BTN2,      XXXXXXX,     MS_WHLU,
+ XXXXXXX,   QK_LLCK,      KC_LALT,      KC_LCTL,      KC_LSFT,          XXXXXXX,       KC_VOLD,       MS_LEFT,   MS_DOWN,    MS_RGHT,      XXXXXXX,     MS_WHLD,
+                                _______,      _______ ,    _______ ,          _______ ,  MO(_FUNC) ,  QK_LLCK
 ),
 [_FUNC] = LAYOUT_split_3x6_3(
- XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,       XXXXXXX,       XXXXXXX,     XXXXXXX,  XXXXXXX,    XXXXXXX,      KC_F24,
- XXXXXXX,   XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,          XXXXXXX,         KC_F7,         KC_F8,       KC_F9,   KC_F10,     KC_F11,      KC_F12,
- XXXXXXX,   XXXXXXX,      XXXXXXX,      KC_RCTL,      KC_LSFT,          XXXXXXX,         KC_F1,         KC_F2,       KC_F3,    KC_F4,      KC_F5,       KC_F6,
-                                _______,      _______ ,    _______ ,          _______ ,  _______ ,  _______
+ TRAINING_TOGGLE,   XXXXXXX,      SQL_REPEAT_DELETE_ROW,      SQL_REPEAT_COMMA,      SQL_REPEAT_SINGLE,          SQL_REPEAT_DOUBLE,       XXXXXXX,       KC_F2,     KC_F5,  KC_F10,    KC_F12,      XXXXXXX,
+ XXXXXXX,   XXXXXXX,      XXXXXXX,      G(KC_R),  C(A(KC_DEL)),          G(KC_L),         XXXXXXX,         KC_HOME,       KC_UP,   KC_END,     XXXXXXX,      KC_PGUP,
+ XXXXXXX,   XXXXXXX,      KC_LALT,      KC_RCTL,      KC_LSFT,          XXXXXXX,         XXXXXXX,         KC_LEFT,       KC_DOWN,    KC_RGHT,      XXXXXXX,       KC_PGDN,
+                                QK_LLCK,      _______ ,    _______ ,          _______ ,  _______ ,  QK_LLCK
 ),
 [_PSS] = LAYOUT_split_3x6_3(
 MY_29,                 MY_17,    MY_23,     MY_5,        MY_18,              MY_20,            MY_25,         MY_21,       MY_9,    MY_15,       MY_16,    MY_32,
@@ -150,7 +162,7 @@ MY_31,                 MY_26,    MY_24,     MY_3,        MY_22,               MY
 )
 };
 
-#define SEND_SQL(x) send_string_with_delay_P(PSTR(x), 10)
+#define SEND_SQL(x) send_string_with_delay_P(PSTR(x), SQL_TYPE_DELAY_MS)
 
 static void sql_select_template(void) {
     SEND_SQL("SELECT \n*\nFROM\n\nWHERE\n\nORDER BY 1"SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP));
@@ -186,7 +198,7 @@ static void sql_where_is_null(void) {
 }
 
 static void sql_where_between(void) {
-    SEND_SQL("\nWHERE  IS BETWEEN  AND"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+    SEND_SQL("\nWHERE  BETWEEN  AND"SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
 }
 
 static void sql_count_as(void) {
@@ -194,11 +206,11 @@ static void sql_count_as(void) {
 }
 
 static void sql_max_as(void) {
-    SEND_SQL("MAX(*) as MaxOf,\n");
+    SEND_SQL("MAX() as MaxOf," SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT));
 }
 
 static void sql_min_as(void) {
-    SEND_SQL("MIN(*) as MinOf,\n");
+    SEND_SQL("MIN() as MinOf," SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT));
 }
 
 static void sql_declare_columns_search(void) {
@@ -232,12 +244,45 @@ static void sql_search_procs(void) {
     SEND_SQL(SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP)SS_TAP(X_UP));
 }
 
+static void sql_query_store(void) {
+    SEND_SQL("DECLARE @HoursBack int = 24;\n");
+    SEND_SQL("DECLARE @Since datetimeoffset = DATEADD(HOUR, -@HoursBack, SYSDATETIMEOFFSET());\n");
+    SEND_SQL("-- Current database; Query Store must contain captured runtime data.\n");
+    SEND_SQL("-- Includes whole aggregation intervals overlapping the lookback window.\n");
+    SEND_SQL(";WITH totals AS (\n");
+    SEND_SQL("    SELECT p.query_id,\n");
+    SEND_SQL("           SUM(rs.count_executions) AS executions,\n");
+    SEND_SQL("           SUM(rs.avg_duration * rs.count_executions) / 1000.0 AS total_duration_ms,\n");
+    SEND_SQL("           MAX(rs.last_execution_time) AS last_execution_time\n");
+    SEND_SQL("    FROM sys.query_store_runtime_stats AS rs\n");
+    SEND_SQL("    JOIN sys.query_store_runtime_stats_interval AS i\n");
+    SEND_SQL("      ON i.runtime_stats_interval_id = rs.runtime_stats_interval_id\n");
+    SEND_SQL("    JOIN sys.query_store_plan AS p ON p.plan_id = rs.plan_id\n");
+    SEND_SQL("    WHERE i.end_time > @Since\n");
+    SEND_SQL("      AND rs.execution_type = 0\n");
+    SEND_SQL("    GROUP BY p.query_id\n");
+    SEND_SQL(")\n");
+    SEND_SQL("SELECT TOP (25) t.query_id, t.executions,\n");
+    SEND_SQL("       t.total_duration_ms,\n");
+    SEND_SQL("       t.total_duration_ms / NULLIF(t.executions, 0) AS avg_duration_ms,\n");
+    SEND_SQL("       t.last_execution_time, qt.query_sql_text\n");
+    SEND_SQL("FROM totals AS t\n");
+    SEND_SQL("JOIN sys.query_store_query AS q ON q.query_id = t.query_id\n");
+    SEND_SQL("JOIN sys.query_store_query_text AS qt ON qt.query_text_id = q.query_text_id\n");
+    SEND_SQL("ORDER BY t.total_duration_ms DESC;");
+    SEND_SQL(SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_END) SS_TAP(X_LEFT) SS_DOWN(X_LSFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_UP(X_LSFT));
+}
+
 static void sql_declare_int(void) {
     SEND_SQL("DECLARE @int INT = ");
 }
 
 static void sql_declare_str(void) {
     SEND_SQL("DECLARE @str VARCHAR(50) = ''"SS_TAP(X_LEFT));
+}
+
+static void sql_declare_dttm(void) {
+    SEND_SQL("DECLARE @dttm DATETIME = ''"SS_TAP(X_LEFT));
 }
 
 static void sql_wrap_single_quotes(void) {
@@ -248,70 +293,151 @@ static void sql_wrap_double_quotes(void) {
     SEND_SQL(SS_TAP(X_HOME)"\""SS_TAP(X_END)"\","SS_TAP(X_DOWN));
 }
 
-static void sql_dbo(void) {
-    SEND_SQL("DBO.");
-}
 
-static void sql_run(void) {
-    SEND_SQL(SS_LGUI("r"));
-}
 
-static void sql_logout(void) {
-    SEND_SQL(SS_LGUI("l"));
+
+// Delete line contents, then the following newline if present.
+// Uses editor Home/End behavior; no clipboard changes.
+static void sql_delete_row(void) {
+    SEND_SQL(SS_TAP(X_HOME) SS_DOWN(X_LSFT) SS_TAP(X_END) SS_UP(X_LSFT) SS_TAP(X_DEL) SS_TAP(X_DEL));
 }
 
 static void sql_line_comma(void) {
     SEND_SQL(SS_TAP(X_END)","SS_TAP(X_DOWN));
 }
 
-void leader_end_user(void) {
-    if (leader_sequence_one_key(KC_Y)) {
-        sql_select_template();
-    } else if (leader_sequence_two_keys(KC_Y, KC_Y)) {
-        sql_count_select_template();
-    } else if (leader_sequence_one_key(KC_H)) {
-        sql_inner_join();
-    } else if (leader_sequence_two_keys(KC_H, KC_H)) {
-        sql_left_outer_join();
-    } else if (leader_sequence_one_key(KC_N)) {
-        sql_where_equals();
-    } else if (leader_sequence_two_keys(KC_N, KC_N)) {
-        sql_where_in();
-    } else if (leader_sequence_three_keys(KC_N, KC_N, KC_N)) {
-        sql_where_like();
-    } else if (leader_sequence_four_keys(KC_N, KC_N, KC_N, KC_N)) {
-        sql_where_is_null();
-    } else if (leader_sequence_five_keys(KC_N, KC_N, KC_N, KC_N, KC_N)) {
-        sql_where_between();
-    } else if (leader_sequence_one_key(KC_U)) {
-        sql_count_as();
-    } else if (leader_sequence_two_keys(KC_U, KC_U)) {
-        sql_max_as();
-    } else if (leader_sequence_three_keys(KC_U, KC_U, KC_U)) {
-        sql_min_as();
-    } else if (leader_sequence_one_key(KC_J)) {
-        sql_declare_columns_search();
-    } else if (leader_sequence_two_keys(KC_J, KC_J)) {
-        sql_search_procs();
-    } else if (leader_sequence_one_key(KC_M)) {
-        sql_declare_int();
-    } else if (leader_sequence_two_keys(KC_M, KC_M)) {
-        sql_declare_str();
-    } else if (leader_sequence_one_key(KC_R)) {
-        sql_wrap_single_quotes();
-    } else if (leader_sequence_two_keys(KC_R, KC_R)) {
-        sql_wrap_double_quotes();
-    } else if (leader_sequence_one_key(KC_F)) {
-        sql_dbo();
-    } else if (leader_sequence_one_key(KC_V)) {
-        sql_run();
-    } else if (leader_sequence_two_keys(KC_V, KC_V)) {
-        sql_logout();
-    } else if (leader_sequence_three_keys(KC_V, KC_V, KC_V)) {
-        tap_code16(C(A(KC_DEL)));
-    } else if (leader_sequence_one_key(KC_T)) {
-        sql_line_comma();
+static void sql_row_number(void) {
+    SEND_SQL("ROW_NUMBER() OVER (ORDER BY ) AS RowNum" SS_TAP(X_END) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT));
+}
+
+static void sql_top_template(void) {
+    SEND_SQL("SELECT TOP (100) *\nFROM \nWHERE ;" SS_TAP(X_UP) SS_TAP(X_END));
+}
+
+static void sql_proc_template(void) {
+    SEND_SQL("CREATE OR ALTER PROCEDURE dbo.\nAS\nBEGIN\n    SET NOCOUNT ON;\n\nEND;\nGO" SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_END));
+}
+
+static void sql_update_template(void) {
+    SEND_SQL("UPDATE \nSET  = \nWHERE  = ;" SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_END));
+}
+
+static void sql_upsert_template(void) {
+    SEND_SQL("MERGE INTO dbo. AS target\nUSING (SELECT @key AS [KeyColumn], @value AS [ValueColumn]) AS source\nON target.[KeyColumn] = source.[KeyColumn]\nWHEN MATCHED THEN\n    UPDATE SET target.[ValueColumn] = source.[ValueColumn]\nWHEN NOT MATCHED BY TARGET THEN\n    INSERT ([KeyColumn], [ValueColumn])\n    VALUES (source.[KeyColumn], source.[ValueColumn]);" SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_END) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT));
+}
+
+static void sql_transaction_template(void) {
+    SEND_SQL("SET XACT_ABORT ON;\nBEGIN TRY\n    BEGIN TRANSACTION;\n    \n    COMMIT TRANSACTION;\nEND TRY\nBEGIN CATCH\n    IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;\n    THROW;\nEND CATCH;" SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_END));
+}
+
+static void sql_external_user_template(void) {
+    SEND_SQL("DECLARE @UserName sysname = N'';\nIF NULLIF(@UserName, N'') IS NULL\n    THROW 50000, 'Enter the external user name.', 1;\nDECLARE @sql nvarchar(max) =\n    N'CREATE USER ' + QUOTENAME(@UserName) + N' FROM EXTERNAL PROVIDER;'\n    + N' ALTER ROLE db_datareader ADD MEMBER ' + QUOTENAME(@UserName) + N';';\nEXEC sys.sp_executesql @sql;" SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_END) SS_TAP(X_LEFT) SS_TAP(X_LEFT));
+}
+
+typedef struct {
+    uint8_t mods;
+    uint8_t weak_mods;
+} sql_mod_state_t;
+
+static sql_mod_state_t sql_mods_begin(void) {
+    const sql_mod_state_t saved = {get_mods(), get_weak_mods()};
+    clear_mods();
+    clear_weak_mods();
+    // Pending one-shot modifiers are consumed, not restored.
+    clear_oneshot_mods();
+    send_keyboard_report();
+    return saved;
+}
+
+static void sql_mods_end(sql_mod_state_t saved) {
+    set_mods(saved.mods);
+    set_weak_mods(saved.weak_mods);
+    send_keyboard_report();
+}
+
+// Only the most recently pressed repeat key repeats. No blocking inter-repeat wait.
+static uint16_t active_line_repeat;
+static uint32_t line_repeat_timer;
+
+static void run_line_repeat(uint16_t keycode) {
+    const sql_mod_state_t saved = sql_mods_begin();
+    switch (keycode) {
+        case SQL_REPEAT_SINGLE: sql_wrap_single_quotes(); break;
+        case SQL_REPEAT_DOUBLE: sql_wrap_double_quotes(); break;
+        case SQL_REPEAT_COMMA: sql_line_comma(); break;
+        case SQL_REPEAT_DELETE_ROW: sql_delete_row(); break;
     }
+    sql_mods_end(saved);
+    // Measure the pause from completion of the previous action.
+    line_repeat_timer = timer_read32();
+}
+
+// Practice reports the matched sequence without running its SQL action.
+static void run_leader_action(void (*action)(void), const char *sequence) {
+    if (training_mode) {
+        send_string("{LEAD:");
+        send_string(sequence);
+        send_string("}");
+    } else {
+        action();
+    }
+}
+
+void leader_end_user(void) {
+    const sql_mod_state_t saved = sql_mods_begin();
+    if (leader_sequence_one_key(KC_A)) {
+        run_leader_action(sql_count_as, "A");
+    } else if (leader_sequence_one_key(KC_D)) {
+        run_leader_action(sql_declare_int, "D");
+    } else if (leader_sequence_two_keys(KC_D, KC_S)) {
+        run_leader_action(sql_declare_str, "DS");
+    } else if (leader_sequence_two_keys(KC_D, KC_T)) {
+        run_leader_action(sql_declare_dttm, "DT");
+    } else if (leader_sequence_two_keys(KC_E, KC_U)) {
+        run_leader_action(sql_external_user_template, "EU");
+
+    } else if (leader_sequence_one_key(KC_H)) {
+        run_leader_action(sql_declare_columns_search, "H");
+    } else if (leader_sequence_two_keys(KC_H, KC_U)) {
+        run_leader_action(sql_query_store, "HU");
+    } else if (leader_sequence_two_keys(KC_H, KC_S)) {
+        run_leader_action(sql_search_procs, "HS");
+    } else if (leader_sequence_one_key(KC_J)) {
+        run_leader_action(sql_inner_join, "J");
+    } else if (leader_sequence_two_keys(KC_J, KC_O)) {
+        run_leader_action(sql_left_outer_join, "JO");
+    } else if (leader_sequence_two_keys(KC_A, KC_N)) {
+        run_leader_action(sql_min_as, "AN");
+    } else if (leader_sequence_two_keys(KC_A, KC_X)) {
+        run_leader_action(sql_max_as, "AX");
+    } else if (leader_sequence_one_key(KC_R)) {
+        run_leader_action(sql_row_number, "R");
+    } else if (leader_sequence_one_key(KC_T)) {
+        run_leader_action(sql_select_template, "T");
+    } else if (leader_sequence_two_keys(KC_T, KC_C)) {
+        run_leader_action(sql_count_select_template, "TC");
+    } else if (leader_sequence_two_keys(KC_T, KC_S)) {
+        run_leader_action(sql_proc_template, "TS");
+    } else if (leader_sequence_two_keys(KC_T, KC_T)) {
+        run_leader_action(sql_top_template, "TT");
+    } else if (leader_sequence_two_keys(KC_T, KC_R)) {
+        run_leader_action(sql_transaction_template, "TR");
+    } else if (leader_sequence_two_keys(KC_T, KC_U)) {
+        run_leader_action(sql_update_template, "TU");
+    } else if (leader_sequence_two_keys(KC_T, KC_M)) {
+        run_leader_action(sql_upsert_template, "TM");
+    } else if (leader_sequence_one_key(KC_W)) {
+        run_leader_action(sql_where_equals, "W");
+    } else if (leader_sequence_two_keys(KC_W, KC_B)) {
+        run_leader_action(sql_where_between, "WB");
+    } else if (leader_sequence_two_keys(KC_W, KC_I)) {
+        run_leader_action(sql_where_in, "WI");
+    } else if (leader_sequence_two_keys(KC_W, KC_L)) {
+        run_leader_action(sql_where_like, "WL");
+    } else if (leader_sequence_two_keys(KC_W, KC_N)) {
+        run_leader_action(sql_where_is_null, "WN");
+    }
+    sql_mods_end(saved);
 }
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -371,7 +497,8 @@ const rgblight_segment_t PROGMEM my_pss_layer[] = RGBLIGHT_LAYER_SEGMENTS(
     { 0, 1, HSV_RED}
 );
 const rgblight_segment_t PROGMEM _yes_layer[] = RGBLIGHT_LAYER_SEGMENTS( {0, 1, HSV_GREEN} );
-const rgblight_segment_t PROGMEM _no_layer[] = RGBLIGHT_LAYER_SEGMENTS( {0, 1, HSV_RED} );
+const rgblight_segment_t PROGMEM training_indicator[] = RGBLIGHT_LAYER_SEGMENTS( {0, 1, HSV_ORANGE} );
+const rgblight_segment_t PROGMEM pending_mod_layer[] = RGBLIGHT_LAYER_SEGMENTS( {0, 1, HSV_WHITE} );
 
 
 
@@ -383,7 +510,8 @@ const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
     my_func_layer,    // Overrides other layers
     my_pss_layer,     // Overrides other layers
     _yes_layer,
-    _no_layer
+    pending_mod_layer,
+    training_indicator
 );
 
 void keyboard_post_init_user(void) {
@@ -421,11 +549,17 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 __attribute__ ((weak))
 bool process_record_secrets(uint16_t keycode, keyrecord_t *record) {
-  layer_clear();
   return true;
 }
 
 void housekeeping_task_user(void) {
+    if (active_line_repeat) {
+        if (get_highest_layer(layer_state) != _FUNC) {
+            active_line_repeat = 0;
+        } else if (timer_elapsed32(line_repeat_timer) >= SQL_LINE_REPEAT_INTERVAL_MS) {
+            run_line_repeat(active_line_repeat);
+        }
+    }
   #ifdef RGBLIGHT_TIMEOUT
   check_rgb_timeout();
   #endif
@@ -443,62 +577,57 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 uint8_t mod_state;
 
+void oneshot_mods_changed_user(uint8_t mods) {
+    // Read the full state: some QMK versions pass only newly added bits.
+    rgblight_set_layer_state(6, get_oneshot_mods() != 0);
+}
+
 void oneshot_locked_mods_changed_user(uint8_t mods) {
-    //if entering a lock state update led to red, else it will be blue
-  if (mods & MOD_MASK_SHIFT) {
-    modlocked = true;
-    rgblight_set_layer_state(5, true);
-  }
-  if (mods & MOD_MASK_CTRL) {
-    modlocked = true;
-    rgblight_set_layer_state(5, true);
-  }
-  if (mods & MOD_MASK_ALT) {
-    modlocked = true;
-    rgblight_set_layer_state(5, true);
-  }
-  if (mods & MOD_MASK_GUI) {
-    modlocked = true;
-    rgblight_set_layer_state(5, true);
-  }
-  if (!mods) {
-    modlocked = false;
-    rgblight_set_layer_state(5, false);
-  }
+    // Show the green LED overlay while any one-shot modifier is locked.
+    modlocked = (mods & (MOD_MASK_SHIFT | MOD_MASK_CTRL | MOD_MASK_ALT | MOD_MASK_GUI)) != 0;
+    rgblight_set_layer_state(5, modlocked);
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == TRAINING_TOGGLE) {
+        if (record->event.pressed) {
+            active_line_repeat = 0;
+            training_mode = !training_mode;
+            rgblight_set_layer_state(7, training_mode);
+        }
+        return false;
+    }
+
+    switch (keycode) {
+        case SQL_REPEAT_SINGLE:
+        case SQL_REPEAT_DOUBLE:
+        case SQL_REPEAT_COMMA:
+        case SQL_REPEAT_DELETE_ROW:
+            if (record->event.pressed) {
+                active_line_repeat = keycode;
+                run_line_repeat(keycode);
+            } else if (active_line_repeat == keycode) {
+                active_line_repeat = 0;
+            }
+            return false;
+    }
+
         mod_state = get_mods();
         switch (keycode) {
-          case MS_SFTLC:
-            if (record->event.pressed) {
-                    // when keycode  is pressed
-                    register_code16(LSFT(MS_BTN1));
-                } else
-                    // when keycode is released
-                    unregister_code16(LSFT(MS_BTN1));
-
-            break;
-          case MS_CTLLC:
-            if (record->event.pressed) {
-                    // when keycode  is pressed
-                    register_code16(LCTL(MS_BTN1));
-                } else {
-                    // when keycode is released
-                    unregister_code16(LCTL(MS_BTN1));
-                }
-            break;
             case KC_BSPC:
                 {
                 // Initialize a boolean variable that keeps track
                 // of the delete key status: registered or not?
                 static bool delkey_registered;
                 if (record->event.pressed) {
-                    // Detect the activation of either shift keys
-                    if (mod_state & MOD_MASK_SHIFT) {
+                    // Include tapped one-shot Shift as well as held Shift.
+                    const uint8_t oneshot_mods = get_oneshot_mods();
+                    if ((mod_state | oneshot_mods) & MOD_MASK_SHIFT) {
                         // First temporarily canceling both shifts so that
                         // shift isn't applied to the KC_DEL keycode
                         del_mods(MOD_MASK_SHIFT);
+                        // Consume one-shot Shift so it does not affect Delete or the next key.
+                        del_oneshot_mods(MOD_MASK_SHIFT);
                         register_code(KC_DEL);
                         // Update the boolean variable to reflect the status of KC_DEL
                         delkey_registered = true;
@@ -518,22 +647,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 // Let QMK process the KC_BSPC keycode as usual outside of shift
                 return true;
             }
-                    /*
-          case MY_DCMCR:
-            if (get_repeat_key_count() > 0) {
-                // MY_MACRO is being repeated!
-                if (record->event.pressed) {
-                    if (get_repeat_key_count() == 1){
-			            send_string_with_delay_P(PSTR(SS_TAP(X_LEFT)SS_DOWN(X_LSFT)SS_TAP(X_HOME)SS_UP(X_LSFT)"DECLARE @str VARCHAR(50) = ''"SS_TAP(X_LEFT)), 10);
-                    }
-                }
-            } else {
-                // MY_MACRO is being used normally.
-                if (record->event.pressed) {
-		            send_string_with_delay_P(PSTR("\nDECLARE @int INT = "), 10);
-                }
-            }
-            return false;
         case GRVTI:
             if (record->tap.count && record->event.pressed) {
                 //send_string_with_delay_P(PSTR("`"), 10);
@@ -632,7 +745,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_QUOT));  //"
             }
 			return false;
-            
+
          case PAT:
             if (record->tap.count && record->event.pressed) {
                 tap_code(KC_P); // Intercept tap function to send x p
@@ -640,12 +753,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_2)); // Intercept hold @
             }
 			return false;
-            
-         case OCBRK:
+
+         case OCBRC:
             if (record->tap.count && record->event.pressed) {
-                tap_code16(S(KC_LBRC)); // Intercept tap function to send 8
+                tap_code16(S(KC_LBRC)); // Tap: opening brace
             } else if (record->event.pressed) {
-                tap_code16(S(KC_RBRC)); // Intercept hold function to send *
+                tap_code16(S(KC_RBRC)); // Hold: closing brace
                 tap_code16(KC_LEFT); //to move inside
             }
 			return false;
@@ -657,11 +770,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(KC_LEFT); //to move ide
             }
 			return false;
-         case OCBRC:
+         case OCBRK:
             if (record->tap.count && record->event.pressed) {
-               tap_code16(KC_LBRC); // Intercept hold function to send [
+               tap_code16(KC_LBRC); // Tap: opening bracket
             } else if (record->event.pressed) {
-                tap_code16(KC_RBRC); // Intercept hold function to send ]
+                tap_code16(KC_RBRC); // Hold: closing bracket
                 tap_code16(KC_LEFT); //to move inside
             }
 			return false;
@@ -695,7 +808,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(S(KC_SCLN)); // Intercept hold function to send :
             }
 			return false;
-            
+
             //}
     }
 	return process_record_secrets(keycode, record);

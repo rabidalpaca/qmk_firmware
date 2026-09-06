@@ -1,0 +1,18 @@
+const $=id=>document.getElementById(id);let active=false,current=null,correct=0,misses=0,total=0,started=0,buffer='',last=null,waiting=false,timer,moveX=0,moveY=0;const weights={};
+function pause(){active=false;waiting=false;clearTimeout(timer);buffer='';$('status').textContent='Paused. Start a session to continue.';}
+function next(){clearTimeout(timer);waiting=false;buffer='';moveX=moveY=0;const pool=CARDS[$('mode').value];let candidates=pool.filter(c=>c.id!==last);if(!candidates.length)candidates=pool;let sum=candidates.reduce((s,c)=>s+(weights[c.id]||1),0),r=Math.random()*sum;current=candidates.find(c=>(r-=weights[c.id]||1)<0)||candidates[0];last=current.id;started=performance.now();$('prompt').textContent=current.label;$('category').textContent=$('mode').selectedOptions[0].text;$('hint').textContent='';$('status').textContent='Your turn.';}
+function answer(ok){if(!active||waiting)return;if(ok){correct++;total+=(performance.now()-started)/1000;weights[current.id]=Math.max(1,(weights[current.id]||1)-1);$('status').textContent='Correct!';waiting=true;timer=setTimeout(next,850);}else{misses++;weights[current.id]=Math.min(5,(weights[current.id]||1)+1);$('status').textContent='Try again, or show the hint.';}$('score').textContent=correct+' correct';$('accuracy').textContent=misses+' misses';$('speed').textContent=(total/Math.max(1,correct)).toFixed(1)+' seconds average';}
+$('start').onclick=()=>{if(['secrets','leaders'].includes($('mode').value)&&!$('trained').checked){$('status').textContent='Training firmware confirmation required.';return;}active=true;correct=misses=total=0;$('score').textContent='0 correct';$('accuracy').textContent='0 misses';$('speed').textContent='— seconds';$('area').classList.toggle('hidden',$('mode').value!=='mouse');next();$('start').blur();};
+$('pause').onclick=pause;$('mode').onchange=()=>{pause();$('gate').classList.toggle('hidden',!['secrets','leaders'].includes($('mode').value));$('area').classList.toggle('hidden',$('mode').value!=='mouse');};$('trained').onchange=pause;$('reveal').onclick=()=>{if(current)$('hint').textContent=current.hint;};$('skip').onclick=()=>{if(active){weights[current.id]=Math.min(5,(weights[current.id]||1)+1);next();}};
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){pause();return;}if(!active||waiting||e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;if(e.key.length!==1)return;e.preventDefault();if(e.repeat)return;if($('mode').value==='symbols')answer(e.key===current.value);else if(['secrets','leaders'].includes($('mode').value)){
+if(e.key==='{')buffer='{';else if(buffer&&/^[A-Z:0-9}]$/.test(e.key))buffer+=e.key;else buffer='';
+if(buffer.length>24)buffer='';
+if(e.key==='}'&&buffer){
+const secret=/^\{TRAIN:(\d{2})\}$/.exec(buffer);
+const leader=/^\{LEAD:([A-Z]+)\}$/.exec(buffer);
+if($('mode').value==='secrets'&&secret)answer(Number(secret[1])===current.value);
+if($('mode').value==='leaders'&&leader)answer(leader[1]===current.value);
+buffer='';
+}}});
+
+const area=$('area');area.oncontextmenu=e=>e.preventDefault();area.addEventListener('mousedown',e=>{if(active&&$('mode').value==='mouse'){e.preventDefault();if(current.kind==='click')answer(e.button===current.value);}});area.addEventListener('wheel',e=>{if(active&&$('mode').value==='mouse'){e.preventDefault();if(current.kind==='wheel')answer(Math.sign(e.deltaY)===current.value);}},{passive:false});area.addEventListener('mousemove',e=>{if(!active||waiting||$('mode').value!=='mouse'||current.kind!=='move')return;moveX+=e.movementX;moveY+=e.movementY;if(Math.max(Math.abs(moveX),Math.abs(moveY))<45)return;const direction=Math.abs(moveX)>Math.abs(moveY)?(moveX>0?'right':'left'):(moveY>0?'down':'up');answer(direction===current.value);moveX=moveY=0;});

@@ -12,9 +12,6 @@
 #define SERIAL_USART_TX_PIN GP0
 #define SERIAL_USART_RX_PIN GP1
 
-#define TRI_LAYER_LOWER_LAYER 1
-#define TRI_LAYER_UPPER_LAYER 2
-#define TRI_LAYER_ADJUST_LAYER 4
 
 //#define NOP_FUDGE 0.4
 #define RGBLIGHT_LIMIT_VAL 196
@@ -27,7 +24,7 @@
 
 #define TAPPING_TERM 200
 #define TAPPING_TERM_PER_KEY
-#define TAPPING_TOGGLE 3
+//#define TAPPING_TOGGLE 3
 
 //#define LEADER_PER_KEY_TIMING
 #define LEADER_TIMEOUT 750
@@ -42,6 +39,14 @@
 #define MOUSEKEY_MAX_SPEED 6
 #define MOUSEKEY_TIME_TO_MAX 64
 #define MEDIA_KEY_DELAY 2
-#define ONESHOT_TAP_TOGGLE 2
+//#define ONESHOT_TAP_TOGGLE 2
+#define DOUBLE_TAP_SHIFT_TURNS_ON_CAPS_WORD
+#define CAPS_WORD_IDLE_TIMEOUT 3000
 #define COMBO_MUST_PRESS_IN_ORDER_PER_COMBO
 #define MASTER_LEFT
+
+// Pause after each completed held SQL line action, in milliseconds.
+#define SQL_LINE_REPEAT_INTERVAL_MS 300
+
+// Delay used when sending SQL text and macro keystrokes, in milliseconds (0-255).
+#define SQL_TYPE_DELAY_MS 10
